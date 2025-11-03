@@ -72,6 +72,7 @@ async def error_handler_for_the_website(
             data=data,
             headers=headers,
         ) as resp:
+            resp.status = 300
             if resp.status in [403, 404]:
 
                 # Для удобного логгирования
@@ -157,7 +158,7 @@ async def error_handler_for_the_website(
     except aiohttp.ClientError as err:
         error_logging.exception(msg=f"Ошибка сети при запросе {url}: {err}")
         return ResponseData(
-            error="Произошла ошибка в сети при запросе",
+            error=f"Произошла ошибка в сети при запросе на {url}",
             status=0,
             url=url,
             method=method,
@@ -165,7 +166,7 @@ async def error_handler_for_the_website(
     except asyncio.TimeoutError as err:
         error_logging.exception(msg=f"Ожидание от сервера истекло {url}: {err}")
         return ResponseData(
-            error="Время ожидания истекло",
+            error=f"Время ожидания от сайта {url} истекло",
             status=0,
             url=url,
             method=method,

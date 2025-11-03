@@ -14,5 +14,4 @@ async def image_description_handler(
     messsage: Message,
     session: aiohttp.ClientSession,
 ):
-    raise ZeroDivisionError
     await messsage.answer("image_description")
