@@ -1,10 +1,12 @@
-from typing import Dict
+from typing import Dict, Optional
 from logging import Logger
 import asyncio
+from erros_handlers.format import format_message
 
 import aiohttp
 
 from core.response import ResponseData
+from settings.response import messages
 
 
 async def safe_read_response(resp):
@@ -30,9 +32,9 @@ async def error_handler_for_the_website(
     session: aiohttp.ClientSession,
     url: str,
     error_logging: Logger,
-    name_router: str,
+    name_router: Optional[str] = None,
     data_type="JSON",
-    timeout=20,
+    timeout=15,
     method="GET",
     data=None,
     headers=None,
@@ -45,7 +47,7 @@ async def error_handler_for_the_website(
         session (_type_): асинхронная сессия запроса
         url (str): URL сайта
         error_logging: (Logger): Логгер для записи ошибки в лог файл
-        name_router: (str): Имя роутера в котором произошла ошибка
+        name_router: (str, Optional): Имя роутера в котором произошла ошибка(По умолчанию None)
         data_type (str, optional): Тип возвращаемых данных.По умолчанию JSON('JSON', 'TEXT', 'BYTES')
         timeout (int, optional): таймаут запроса в секундах
         method (str, optional): Метод запроса. 'POST' или "GET"
@@ -62,7 +64,7 @@ async def error_handler_for_the_website(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-    # Чтобы не ждать бесконечно при connect/read
+
     timeout_cfg: aiohttp.ClientTimeout = aiohttp.ClientTimeout(total=timeout)
     try:
         async with session.request(
@@ -71,12 +73,10 @@ async def error_handler_for_the_website(
             timeout=timeout_cfg,
             data=data,
             headers=headers,
+            allow_redirects=True,
         ) as resp:
-            resp.status = 300
+            # Для удобного логгирования
             if resp.status in [403, 404]:
-
-                # Для удобного логгирования
-                url: str = str(resp.url)
 
                 # Тело ответа запроса
                 error_body = await safe_read_response(resp=resp)
@@ -96,40 +96,44 @@ async def error_handler_for_the_website(
 
                 logg_error_str: str = str(error_body)[:500]
 
-                # Формируем запись сообщения об ошибке в лог файл
-                error_web_response_message: str = (
-                    f"\n{'-' * 80}\nОшибка в {name_router}\nМетод: {resp.method}\n"
-                    f"Status code: {resp.status}\nUrl: {url}\nТрессировка:\n"
-                    f"{logg_error_str}\n{'-' * 80}"
+                error_logging.error(
+                    msg=format_message(
+                        name_router=name_router,
+                        method=resp.method,
+                        status=resp.status,
+                        url=url,
+                        error_text=logg_error_str,
+                    )
                 )
-
-                error_logging.error(msg=error_web_response_message)
 
                 return ResponseData(
                     status=resp.status,
                     error=error_message_str,
                     url=url,
-                    method=method,
+                    method=resp.method,
                 )
 
             elif resp.status != 200:
-                # Для удобного логгирования
-                url: str = str(resp.url)
+
                 error_body = await safe_read_response(resp=resp)
 
                 logg_error_str: str = str(error_body)[:500]
-                error_web_response_message: str = (
-                    f"\n{'-' * 80}\nОшибка в {name_router}\nМетод: {resp.method}\n"
-                    f"Status code:{resp.status}\nUrl:{url}\nТрессировка:\n"
-                    f"{logg_error_str}\n{'-' * 80}"
+
+                error_logging.error(
+                    msg=format_message(
+                        name_router=name_router,
+                        method=resp.method,
+                        status=resp.status,
+                        url=url,
+                        error_text=logg_error_str,
+                    )
                 )
-                error_logging.error(msg=error_web_response_message)
 
                 return ResponseData(
-                    STATUS=resp.status,
-                    ERROR=f"Сайт вернул ошибку {resp.status}",
-                    URL=url,
-                    METHOD=method,
+                    status=resp.status,
+                    error=messages.UNKNOWN_STATUS_ERROR,
+                    url=url,
+                    method=resp.method,
                 )
             if data_type.upper() == "JSON":
                 message_body = await resp.json()
@@ -137,44 +141,72 @@ async def error_handler_for_the_website(
                     message=message_body,
                     status=resp.status,
                     url=url,
-                    method=method,
+                    method=resp.method,
                 )
             elif data_type.upper() == "TEXT":
-                message_body = await resp.text()
+                message_body: str = await resp.text()
                 return ResponseData(
                     message=message_body,
                     status=resp.status,
                     url=url,
-                    method=method,
+                    method=resp.method,
                 )
             else:
-                message_body = await resp.read()
+                message_body: bytes = await resp.read()
                 return ResponseData(
                     message=message_body,
                     status=resp.status,
                     url=url,
-                    method=method,
+                    method=resp.method,
                 )
     except aiohttp.ClientError as err:
-        error_logging.exception(msg=f"Ошибка сети при запросе {url}: {err}")
+        error_message: str = f"Ошибка сети при запросе:\n{err}"
+        error_logging.exception(
+            msg=format_message(
+                name_router=name_router,
+                method=method,
+                status=0,
+                url=url,
+                error_text=error_message,
+            )
+        )
+
         return ResponseData(
-            error=f"Произошла ошибка в сети при запросе на {url}",
+            error=messages.NETWORK_ERROR,
             status=0,
             url=url,
             method=method,
         )
     except asyncio.TimeoutError as err:
-        error_logging.exception(msg=f"Ожидание от сервера истекло {url}: {err}")
+        error_message: str = f"Ожидание от сервера истекло:\n{err}"
+        error_logging.exception(
+            msg=format_message(
+                name_router=name_router,
+                method=method,
+                status=0,
+                url=url,
+                error_text=error_message,
+            )
+        )
         return ResponseData(
-            error=f"Время ожидания от сайта {url} истекло",
+            error=messages.TIMEOUT_ERROR,
             status=0,
             url=url,
             method=method,
         )
     except Exception as err:
-        error_logging.exception(f"Неизвестная ошибка при запросе {url}: {err}")
+        error_message: str = f"Неизвестная ошибка при запросе:\n{err}"
+        error_logging.exception(
+            msg=format_message(
+                name_router=name_router,
+                method=method,
+                status=0,
+                url=url,
+                error_text=error_message,
+            )
+        )
         return ResponseData(
-            error="Ошибка на стороне сервера.Идет работа по исправлению...",
+            error=messages.SERVER_ERROR,
             status=0,
             url=url,
             method=method,
