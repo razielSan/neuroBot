@@ -1,12 +1,21 @@
 from aiogram import Bot, Dispatcher
 
 from utils.log_utils import setup_bot_logging
+from utils.keyboards_utils import (
+    get_total_buttons_reply_kb,
+    get_total_buttons_inline_kb,
+)
 from neuroBot.configuration.config import BotSettings
+from neuroBot.configuration.image_description import ImaggaImageDescription
 from settings.response import settings
+from core.response import InlineKeyboardData
 
 
 # Настройки бота
 bot_settings: BotSettings = BotSettings()
+
+# Настройки моделей
+img_desc_imagga_settings: ImaggaImageDescription = ImaggaImageDescription()
 
 
 # Создаем бота
@@ -14,6 +23,27 @@ bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
 
 # Создаем диспетчер для бота
 dp: Dispatcher = Dispatcher()
+
+
+# Создание кнопок для общих вызовов
+get_start_button_neuroBot = get_total_buttons_reply_kb(
+    list_text=[
+        bot_settings.BOT_ROUTER_REPLY_KB_NAME_1,
+        bot_settings.BOT_ROUTER_REPLY_KB_NAME_2,
+        bot_settings.BOT_ROUTER_REPLY_KB_NAME_3,
+    ],
+    quantity_button=1,
+)
+
+get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_kb(
+    list_inline_kb_data=[
+        InlineKeyboardData(
+            text=img_desc_imagga_settings.NAME_ROUTER,
+            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_NAME
+        )
+    ],
+    quantity_button=1,
+)
 
 
 # Создаем общие логгеры для бота по имени
