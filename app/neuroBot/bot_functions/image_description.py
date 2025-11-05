@@ -1,13 +1,14 @@
-from typing import List
+from typing import List, Optional
 from pathlib import Path
-import traceback
 import aiohttp
+from logging import Logger
+from erros_handlers.format import format_message
+from settings.response import messages
 
-from errors_handlers.main import error_handler_for_the_website
+from erros_handlers.main import error_handler_for_the_website
 
-from settings.config import settings
-from logging_handler.main import error_logging
-from settings.response import ResponseData
+
+from core.response import ResponseData
 
 
 async def get_image_description_by_immaga(
@@ -16,6 +17,8 @@ async def get_image_description_by_immaga(
     url_tags: str,
     path_img: Path,
     session: aiohttp.ClientSession,
+    error_logging: Logger,
+    name_router: Optional[str] = None,
     language="en",
     limit=-1,
 ) -> ResponseData:
@@ -25,7 +28,10 @@ async def get_image_description_by_immaga(
         key_autorization (str): Токен аторизации
         upload_endpoint (str): URL для получения uplooad_image_id картинки
         url_tags (str): URL для описание изображения
-        path_img: (Path): Путь до картинки для описания изображений
+        path_img (Path): Путь до картинки для описания изображений
+        session (ClientSession): сессия для запроса
+        error_logging (Logger): логгер для записи в лог файл
+        name_router (str, Optional): Имя роутера для записи в лог файл при ошибке(По умолчанию Nonr)
         language (str, optional): Язык описания изображений.По умолчанию английский
         limit (int, optional): Количество описаний.По умолчанию максимальное
 
@@ -39,51 +45,72 @@ async def get_image_description_by_immaga(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-    # Отправляем картинку на сайт для ее описания
-    with open(path_img, "rb") as file:
-        response: ResponseData = await error_handler_for_the_website(
+
+    try:
+        # Отправляем картинку на сайт для ее описания
+        with open(path_img, "rb") as file:
+            response: ResponseData = await error_handler_for_the_website(
+                session=session,
+                url=upload_endpoint,
+                headers={
+                    "Authorization": f"Basic {key_autorization}",
+                },
+                data={"image": file},
+                method="POST",
+                name_router=name_router,
+                error_logging=error_logging,
+            )
+
+        if response.error:
+            return response
+
+        # Получаем upload_id картинки
+        upload_id: str = response.message["result"]["upload_id"]
+
+        # Делаем запрос на получение описание изображения
+        response_image_description: ResponseData = await error_handler_for_the_website(
             session=session,
-            url=upload_endpoint,
+            url=f"{url_tags}?image_upload_id="
+            f"{upload_id}&language={language}&limit={limit}",
             headers={
                 "Authorization": f"Basic {key_autorization}",
             },
-            data={"image": file},
+            name_router=name_router,
+            error_logging=error_logging,
+        )
+        if response_image_description.error:
+            return response_image_description
+
+        # Формируем данные для описания картинки
+        array_image_description: List = [
+            "Список возможных вариантов изображения на картинке:\n\n"
+        ]
+
+        for data in response_image_description.message["result"]["tags"]:
+            array_image_description.append(
+                f"{data['tag'][language].title()} ({data['confidence']:.3f}%) "
+            )
+
+        mess: str = "\n".join(array_image_description)
+        return ResponseData(
+            message=mess,
+            status=200,
+            method=response_image_description.method,
+            url=response_image_description.url,
+        )
+    except Exception as err:
+        error_logging.exception(
+            msg=format_message(
+                name_router=name_router,
+                method="POST",
+                url=upload_endpoint,
+                status=0,
+                error_text=err,
+            )
+        )
+        return ResponseData(
+            error=messages.SERVER_ERROR,
+            status=0,
+            url=upload_endpoint,
             method="POST",
         )
-
-    if response.error:
-        return response
-
-    # Получаем upload_id картинки
-    upload_id: str = response.message["result"]["upload_id"]
-
-    # Делаем запрос на получение описание изображения
-    response_image_description: ResponseData = await error_handler_for_the_website(
-        session=session,
-        url=f"{url_tags}?image_upload_id="
-        f"{upload_id}&language={language}&limit={limit}",
-        headers={
-            "Authorization": f"Basic {key_autorization}",
-        },
-    )
-
-    if response_image_description.error:
-        return response_image_description
-
-    # Формируем данные для описания картинки
-    array_image_description: List = [
-        "Список возможных вариантов изображения на картинке:\n\n"
-    ]
-
-    for data in response_image_description.message["result"]["tags"]:
-        array_image_description.append(
-            f"{data['tag'][language].title()} ({data['confidence']:.3f}%) "
-        )
-
-    mess: str = "\n".join(array_image_description)
-    return ResponseData(
-        message=mess,
-        status=200,
-        method=response_image_description.method,
-        url=response_image_description.url,
-    )
