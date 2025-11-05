@@ -1,6 +1,13 @@
 import aiohttp
 
-from neuroBot.extensions import bot, dp, error_logger, bot_settings, info_logger
+from neuroBot.extensions import (
+    bot,
+    dp,
+    error_logger,
+    bot_settings,
+    info_logger,
+    img_desc_imagga_settings,
+)
 from neuroBot.views import main_router
 from neuroBot.views.image_description import image_description_router
 from neuroBot.views.image_generation import image_generation_router
@@ -10,7 +17,9 @@ from utils.filesistem import ensure_derictories
 
 # Создаем небходимые папки
 ensure_derictories(
-    bot_settings.PATH_BOT_STATIC_FOLDER, bot_settings.PATH_BOT_TEMP_FOLDER
+    bot_settings.PATH_BOT_STATIC_FOLDER,
+    bot_settings.PATH_BOT_TEMP_FOLDER,
+    img_desc_imagga_settings.PATH_TO_IMAGGA_IMAGES_DESCRIPTION,
 )
 
 
@@ -26,9 +35,9 @@ async def run_bot() -> None:
         )  # Игнорирует все присланные сообщение пока бот не работал
 
         # Подключаем роутеры
-        dp.include_router(image_description_router)
         dp.include_router(video_generation_router)
         dp.include_router(image_generation_router)
+        dp.include_router(image_description_router)
         dp.include_router(main_router)
 
         # Создаем глобальную сессию для всего бота. Будет доступ в роутерах через
@@ -39,4 +48,6 @@ async def run_bot() -> None:
             dp["session"] = session
             await dp.start_polling(bot)
     except Exception as err:
-        error_logger.exception(f"Критическая ошибка при работа бота {bot_settings.BOT_NAME}: {err}")
+        error_logger.exception(
+            f"Критическая ошибка при работа бота {bot_settings.BOT_NAME}: {err}"
+        )
