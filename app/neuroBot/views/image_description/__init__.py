@@ -1,6 +1,10 @@
 from neuroBot.extensions import image_description_error_logger, error_logger
 from neuroBot.middleware.errors_middleware import RouterErrorMiddleware
 from neuroBot.views.image_description.main import image_description_router
+from neuroBot.views.image_description.imagga import imagga_img_desc_router
+
+
+image_description_router.include_router(imagga_img_desc_router)
 
 
 image_description_router.message.middleware(
