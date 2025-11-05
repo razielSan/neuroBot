@@ -3,9 +3,7 @@ from aiogram.filters.state import StateFilter
 from aiogram.types import Message
 import aiohttp
 
-from neuroBot.extensions import bot_settings
-from neuroBot.keyboards.reply.main import get_start_menu_button
-
+from neuroBot.extensions import bot_settings, get_start_button_neuroBot
 
 main_router: Router = Router(name=bot_settings.BOT_NAME)
 
@@ -14,5 +12,5 @@ main_router: Router = Router(name=bot_settings.BOT_NAME)
 async def main_handler(message: Message, session: aiohttp.ClientSession):
     await message.answer(
         text="Главное меню бота",
-        reply_markup=get_start_menu_button(),
+        reply_markup=get_start_button_neuroBot,
     )
