@@ -43,8 +43,8 @@ def setup_bot_logging(
     if not root_path:
         base_path: Path = base_path / name  # Путь до папки с логами
 
-    # Если перадано имя конкретного роутера
-    if router_name:
+    # Если перадано имя конкретного роутера и логгер не ялвяется глобальным
+    if router_name and not root_path:
         base_path = base_path / router_name
 
     info_path: Path = base_path / "info.log"
