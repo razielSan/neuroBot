@@ -21,7 +21,6 @@ class RouterErrorMiddleware(BaseMiddleware):
         except Exception as err:
             # Формируем красивое сообщение
             error_text: str = (
-                f"\n{'-' * 80}\n"
                 f"🚨 Ошибка в Router: {self.current_logger.name}\n"
                 f"Тип события: {type(event).__name__}\n"
                 f"Пользователь: {getattr(event.from_user, 'username', 'Неизвестно')} "
