@@ -54,7 +54,7 @@ async def vheer(call: CallbackQuery, state: FSMContext) -> None:
 
     await call.message.edit_reply_markup(reply_markup=None)
     await call.message.answer(
-        text="Доступные варианты",
+        text=messages.OPTIONS_BOT_MESSAGE,
         reply_markup=get_total_buttons_inline_kb(
             [
                 InlineKeyboardData(
@@ -79,7 +79,7 @@ async def cancel__vheer_video_generation_handler(
     await message.answer(text=messages.CANCEL_MESSAGE)
     await bot.send_message(
         chat_id=message.chat.id,
-        text="Главное меню бота",
+        text=messages.START_BOT_MESSAGE,
         reply_markup=get_start_button_neuroBot,
     )
 
@@ -144,7 +144,7 @@ async def add_description_for_vheer(message: Message, state: FSMContext) -> None
 @vheer_router.message(VheerVideoGenerationFSM.image, F)
 async def add_photo_for_vheer(message: Message, state: FSMContext):
     """
-        Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
+    Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
 
     """
 
@@ -350,7 +350,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
             await bot.send_message(
                 chat_id=message.chat.id,
-                text="Главное меню бота",
+                text=messages.START_BOT_MESSAGE,
                 reply_markup=get_start_button_neuroBot,
             )
         else:
@@ -366,7 +366,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
             await bot.send_message(
                 chat_id=message.chat.id,
-                text="Доступные варианты",
+                text=messages.OPTIONS_BOT_MESSAGE,
                 reply_markup=get_total_buttons_inline_kb(
                     [
                         InlineKeyboardData(

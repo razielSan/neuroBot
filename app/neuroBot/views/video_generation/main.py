@@ -6,6 +6,7 @@ from neuroBot.extensions import (
     bot_settings,
     get_start_button_inline_menu_for_video_generation,
 )
+from settings.response import messages
 
 
 video_generation_router: Router = Router(name=bot_settings.BOT_ROUTER_NAME_3)
@@ -17,6 +18,6 @@ video_generation_router: Router = Router(name=bot_settings.BOT_ROUTER_NAME_3)
 )
 async def image_description_handler(messsage: Message):
     await messsage.answer(
-        "Доступные варианты",
+        messages.OPTIONS_BOT_MESSAGE,
         reply_markup=get_start_button_inline_menu_for_video_generation,
     )

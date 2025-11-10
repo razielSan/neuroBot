@@ -28,7 +28,7 @@ imagga_img_desc_router: Router = Router(name=img_desc_imagga_settings.NAME_ROUTE
 
 
 class ImaggaImgDescFSM(StatesGroup):
-    """FSM для описания изображений сайта immaga"""
+    """FSM для описания изображений сайта immaga."""
 
     spam: State = State()
     prompt: State = State()
@@ -43,6 +43,7 @@ async def immaga(
     session: aiohttp.ClientSession,
     state: FSMContext,
 ) -> None:
+    """Работа с FSM ImaggaImgDescFSM.Просит пользвателя скинуть картинку для анализа."""
 
     await call.message.edit_reply_markup(reply_markup=None)
 
@@ -56,7 +57,7 @@ async def immaga(
 
 @imagga_img_desc_router.message(ImaggaImgDescFSM.prompt, F.text == "Отмена")
 async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) -> None:
-    """Работа с FSM ImgDescFS.Отменяет все действияю"""
+    """Работа с FSM ImaggaImgDescFSM.Отменяет все действияю"""
     await state.clear()
     await message.answer(
         text=messages.CANCEL_MESSAGE,
@@ -64,13 +65,18 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
     )
     await bot.send_message(
         chat_id=message.chat.id,
-        text="Доступные варианты",
+        text=messages.OPTIONS_BOT_MESSAGE,
         reply_markup=get_start_buttons_inline_menu_for_image_description,
     )
 
 
 @imagga_img_desc_router.message(ImaggaImgDescFSM.spam, F.text)
-async def get_message_when_spam_for_imagga(message: Message, state: FSMContext):
+async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) -> None:
+    """ 
+        Работа с FSM ImaggaImgDescFSM.
+        Отправляет пользователю сообщение если был введен текс при обработке запроса.
+    """
+
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
@@ -80,6 +86,11 @@ async def add_prompt_for_imagga(
     session: aiohttp.ClientSession,
     state: FSMContext,
 ) -> None:
+    """
+        Работса с FSM ImaggaImgDescFSM.
+        Отправляет пользователю анализ изображения.
+    """
+
     if message.content_type == ContentType.PHOTO:
 
         # Встаем в состояние spam для ответа пользователю при запросе

@@ -10,6 +10,8 @@ class BotSettings(BaseSettings):
 
     # Основные параметры
     BOT_NAME: str = "neuroBot" 
+    
+    # Имена подлкючаемых роутеров
     BOT_ROUTER_NAME_1: str = "image_description"
     BOT_ROUTER_REPLY_KB_NAME_1: str = "📝 Описание Изображений"
     BOT_LOGGING_ERROR_NAME_1: str = f"{BOT_NAME}_{BOT_ROUTER_NAME_1}" # Имя роутера для записи
