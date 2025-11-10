@@ -40,12 +40,12 @@ def create_selenium_driver(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-    
+
     try:
         if browser == "chrome":
             service: Service = Service(executable_path=driver_path)
             options: Options = Options()
-            
+
             # Добавляем опции
             for data in add_arument:
                 options.add_argument(data)

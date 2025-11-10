@@ -144,7 +144,7 @@ async def add_description_for_vheer(message: Message, state: FSMContext) -> None
 @vheer_router.message(VheerVideoGenerationFSM.image, F)
 async def add_photo_for_vheer(message: Message, state: FSMContext):
     """
-    Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
+        Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
 
     """
 
@@ -313,7 +313,12 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
                     url=video_gen_vheer_settings.VIDEO_DATA,
                 )
             )
-            msg = ResponseData(message=None, error=f"Ошибка генерации видео")
+            msg = ResponseData(
+                error="Ошибка генерации видео",
+                status=0,
+                url=video_gen_vheer_settings.VIDEO_DATA,
+                method="unknown",
+            )
 
         if msg.message:
             await state.clear()

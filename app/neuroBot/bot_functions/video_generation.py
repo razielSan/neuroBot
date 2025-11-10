@@ -73,7 +73,6 @@ def create_video_by_is_vheer(
         if response_driver.error:
             return response_driver
         driver = response_driver.message
-        
 
         # 2 Обновляем прогресс(до загрузки сайта) для вывода пользователю
         update_progress()

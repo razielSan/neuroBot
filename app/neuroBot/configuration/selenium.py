@@ -5,6 +5,8 @@ from pydantic import BaseModel
 
 
 class SeleniumSettings(BaseModel):
+    """Настройки для seleniuma."""
+
     PATH_CHROME_DRIVER: Path = (
         Path(__file__).resolve().parent.parent
         / "static"
