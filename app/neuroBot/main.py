@@ -7,6 +7,7 @@ from neuroBot.extensions import (
     bot_settings,
     info_logger,
     img_desc_imagga_settings,
+    video_gen_vheer_settings
 )
 from neuroBot.views import main_router
 from neuroBot.views.image_description import image_description_router
@@ -20,6 +21,8 @@ ensure_derictories(
     bot_settings.PATH_BOT_STATIC_FOLDER,
     bot_settings.PATH_BOT_TEMP_FOLDER,
     img_desc_imagga_settings.PATH_TO_IMAGGA_IMAGES_DESCRIPTION,
+    video_gen_vheer_settings.PATH_TO_IMAGE_VHEER,
+    video_gen_vheer_settings.PATH_TO_VIDEO_VHEER
 )
 
 
