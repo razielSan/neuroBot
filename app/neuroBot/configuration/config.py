@@ -11,14 +11,14 @@ class BotSettings(BaseSettings):
     # Основные параметры
     BOT_NAME: str = "neuroBot" 
     BOT_ROUTER_NAME_1: str = "image_description"
-    BOT_ROUTER_REPLY_KB_NAME_1: str = "Описание Изображений"
+    BOT_ROUTER_REPLY_KB_NAME_1: str = "📝 Описание Изображений"
     BOT_LOGGING_ERROR_NAME_1: str = f"{BOT_NAME}_{BOT_ROUTER_NAME_1}" # Имя роутера для записи
     # в лог ошибок
     BOT_ROUTER_NAME_2: str = "image_generation"
-    BOT_ROUTER_REPLY_KB_NAME_2: str = "Генерация Изображений"
+    BOT_ROUTER_REPLY_KB_NAME_2: str = "🖼 Генерация Изображений"
     BOT_LOGGING_ERROR_NAME_2: str = f"{BOT_NAME}_{BOT_ROUTER_NAME_2}"
     BOT_ROUTER_NAME_3: str = "video_generation"
-    BOT_ROUTER_REPLY_KB_NAME_3: str = "Генерация видео"
+    BOT_ROUTER_REPLY_KB_NAME_3: str = "🎬 Генерация Видео"
     BOT_LOGGING_ERROR_NAME_3: str = f"{BOT_NAME}_{BOT_ROUTER_NAME_3}"
 
     # Базовые пути для бота - вычисляются относительно этого файла
