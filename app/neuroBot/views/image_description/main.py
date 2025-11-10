@@ -11,7 +11,10 @@ from neuroBot.extensions import (
 image_description_router: Router = Router(name=bot_settings.BOT_ROUTER_NAME_1)
 
 
-@image_description_router.message(StateFilter(None), F.text == "Описание Изображений")
+@image_description_router.message(
+    StateFilter(None),
+    F.text == bot_settings.BOT_ROUTER_REPLY_KB_NAME_1,
+)
 async def image_description_handler(
     messsage: Message,
     session: aiohttp.ClientSession,
