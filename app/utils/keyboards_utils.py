@@ -4,19 +4,19 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.types.keyboard_button import KeyboardButton
 from aiogram.types.reply_keyboard_markup import ReplyKeyboardMarkup
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from core.response import InlineKeyboardData
+from core.config import InlineKeyboardData
 
 
 def get_total_buttons_inline_kb(
     list_inline_kb_data: List[InlineKeyboardData],
-    quantity_button: int,
-    resize_keyboard=True,
+    quantity_button: int = 1,
+    resize_keyboard: bool = True,
 ) -> InlineKeyboardMarkup:
     """Общая inline клавиатура с генерацими кнопок
 
     Args:
         list_inline_kb_data (List[InlineKeyboardData]): список из InlineKeyboardData с данными о кнопке
-        quantity_button (int): Количество кнопок на строке
+        quantity_button (int): Количество кнопок на строке(По умолчанию 1)
         resize_keyboard (bool, optional): Изменяет размер клавиатуры по вертикали для оптимального размещения
 
     Returns:
