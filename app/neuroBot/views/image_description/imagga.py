@@ -59,7 +59,7 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
     """Работа с FSM ImgDescFS.Отменяет все действияю"""
     await state.clear()
     await message.answer(
-        text="Запрос прерван.Описание изображений(imagga) отменено",
+        text=messages.CANCEL_MESSAGE,
         reply_markup=get_start_button_neuroBot,
     )
     await bot.send_message(
@@ -70,12 +70,12 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
 
 
 @imagga_img_desc_router.message(ImaggaImgDescFSM.spam, F.text)
-async def get_message_when_spam_for_imagg(message: Message, state: FSMContext):
+async def get_message_when_spam_for_imagga(message: Message, state: FSMContext):
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
 @imagga_img_desc_router.message(ImaggaImgDescFSM.prompt, F)
-async def add_prompt(
+async def add_prompt_for_imagga(
     message: Message,
     session: aiohttp.ClientSession,
     state: FSMContext,
@@ -132,6 +132,5 @@ async def add_prompt(
 
     else:
         await message.answer(
-            "Скидывамые данные должы быть фото в формате jpg,"
-            " png или gif\n\nСкидывайте, снова , картинку для анализа",
+            text=messages.NOT_PHOTO_MESSAGE,
         )
