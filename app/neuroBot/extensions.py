@@ -7,8 +7,10 @@ from utils.keyboards_utils import (
 )
 from neuroBot.configuration.config import BotSettings
 from neuroBot.configuration.image_description import ImaggaImageDescription
+from neuroBot.configuration.video_generation import VheerVideoGeneration
 from settings.response import settings
-from core.response import InlineKeyboardData
+from core.config import InlineKeyboardData
+from neuroBot.configuration.selenium import SeleniumSettings
 
 
 # Настройки бота
@@ -16,7 +18,7 @@ bot_settings: BotSettings = BotSettings()
 
 # Настройки моделей
 img_desc_imagga_settings: ImaggaImageDescription = ImaggaImageDescription()
-
+video_gen_vheer_settings: VheerVideoGeneration = VheerVideoGeneration()
 
 # Создаем бота
 bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
@@ -39,7 +41,18 @@ get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_k
     list_inline_kb_data=[
         InlineKeyboardData(
             text=img_desc_imagga_settings.NAME_ROUTER,
-            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_NAME
+            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_NAME,
+        ),
+    ],
+    quantity_button=1,
+)
+
+
+get_start_button_inline_menu_for_video_generation = get_total_buttons_inline_kb(
+    list_inline_kb_data=[
+        InlineKeyboardData(
+            text=video_gen_vheer_settings.NAME_ROUTER,
+            callback_data=video_gen_vheer_settings.CALLBACK_BUTTON_NAME,
         )
     ],
     quantity_button=1,
@@ -90,3 +103,6 @@ info_logger, warning_logger, error_logger = setup_bot_logging(
     log_format=settings.LOG_FORMAT,
     date_format=settings.DATE_FORMAT,
 )
+
+
+chrome_selenium_settings: SeleniumSettings = SeleniumSettings()
