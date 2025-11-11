@@ -13,21 +13,21 @@ from selenium import webdriver
 
 from neuroBot.utils.selenium import create_selenium_driver
 from neuroBot.extensions import chrome_selenium_settings
-from core.response import ResponseData
+from core.response import ResponseData, LoggingData
 from settings.response import messages
 from erros_handlers.format import format_message
 from neuroBot.extensions import video_gen_vheer_settings
 
 
 def create_video_by_is_vheer(
-    name_router: str,
+    # name_router: str,
     url: str,
     image_path: str,
     video_path: str,
     video_data: str,
     prompt: str,
     update_progress: Callable,
-    error_logging: Logger,
+    logging_data: LoggingData,
     description_url: Optional[str] = None,
 ) -> Dict:
 
@@ -35,14 +35,13 @@ def create_video_by_is_vheer(
        изображений, жмет кнопку генерации видео и скачивае видео с сайта в папку
 
     Args:
-        name_router (str): Имя роутера для записи в лог
         url (str): URL сайта vheer для генерации изображения
         image_path (str): Путь до картинки с изображением
         video_path (str): Путь для сохранения изображения
         video_data (str): JavsSripts для сохранения видео через blob
         prompt (str): описание изображения
         update_progress (Callable): Функция для отслеживания прогресса скачивания
-        error_logging (Logger): Логгер для записи в лог файл
+        logging_data (Logger): класс содержащий в себе логгер и имя роутера для записи в лог
         description_url (str, Optional): URL для генерации описания изображения(str/None)
         None - По умолчанию
 
@@ -59,16 +58,14 @@ def create_video_by_is_vheer(
 
     driver = None
     try:
-
         # 1 Обновляем прогресс при заходе в функцию
         update_progress()
 
         # Создаем driver
         response_driver: ResponseData = create_selenium_driver(
-            name_router=name_router,
             driver_path=chrome_selenium_settings.PATH_CHROME_DRIVER,
             add_arument=chrome_selenium_settings.LIST_ADD_ARGUMENT,
-            error_logging=error_logging,
+            logging_data=logging_data,
         )
         if response_driver.error:
             return response_driver
@@ -80,11 +77,10 @@ def create_video_by_is_vheer(
         # Если есть URL для сайта с описанием изображения заходим в него
         if description_url:
             resonse_description: ResponseData = get_prompt_for_image_describepicture_сс(
-                name_router=name_router,
                 driver=driver,
                 image_path=image_path,
                 description_url=description_url,
-                error_logging=error_logging,
+                logging_data=logging_data,
             )
 
             # Если сайт по описанию изображения выдал ошибку используем стандартное описание
@@ -98,18 +94,20 @@ def create_video_by_is_vheer(
 
             prompt: str = resonse_description.message
 
+        # Обрабатываем ошибку при доступе к сайту
         try:
             driver.get(url=url)
         except Exception as err:
-            error_logging.exception(
+            logging_data.error_logger.exception(
                 msg=format_message(
-                    name_router=name_router,
+                    name_router=logging_data.router_name,
                     method="GET",
                     status=0,
                     url=url,
                     error_text=f"Ошибка при доступе к сайту {url} - {err}",
                 )
             )
+
             return ResponseData(
                 error=messages.NETWORK_ERROR,
                 url=url,
@@ -218,15 +216,16 @@ def create_video_by_is_vheer(
         )
 
     except Exception as err:
-        error_logging.exception(
+        logging_data.error_logger.exception(
             msg=format_message(
-                name_router=name_router,
+                name_router=logging_data.router_name,
                 method="<unknown>",
                 status=0,
                 url=description_url,
                 error_text=err,
             )
         )
+
         return ResponseData(
             error=messages.NETWORK_ERROR,
             url=url,
@@ -242,21 +241,19 @@ def create_video_by_is_vheer(
 
 
 def get_prompt_for_image_by_produts_appose_ai(
-    name_router: str,
     driver: webdriver.Chrome,
     image_path: str,
     description_url: str,
-    error_logging: Logger,
+    logging_data: LoggingData,
 ) -> ResponseData:
     """Заходит на сайт "https://products.aspose.ai, загружает картинку, нажимает на кнопку сгенерировать
     описание и возвращает описание изображения
 
     Args:
-        name_router (str): Имя роутера для записи в лог
         driver (_type_): драйвер для селениума
         image_path (str): путь до картинки для описания
         description_url (str): URL сайта для описания изображения
-        error_logging (Logger): логгер для записи в лог файл
+        logging_data (Logger): класс содержащий в себе логгер и имя роутера для записи в лог
 
     Returns:
         ResponseData: Объект с результатом запроса.
@@ -312,9 +309,9 @@ def get_prompt_for_image_by_produts_appose_ai(
             status=200,
         )
     except Exception as err:
-        error_logging.exception(
+        logging_data.error_logger.exception(
             msg=format_message(
-                name_router=name_router,
+                name_router=logging_data.router_name,
                 method="<unknown>",
                 status=0,
                 url=description_url,
@@ -330,11 +327,10 @@ def get_prompt_for_image_by_produts_appose_ai(
 
 
 def get_prompt_for_image_describepicture_сс(
-    name_router: str,
     driver: webdriver.Chrome,
     image_path: str,
     description_url: str,
-    error_logging: Logger,
+    logging_data: LoggingData,
 ) -> ResponseData:
     """
         Заходит на сайт "https://describepicture.cc/ru, загружает
@@ -342,11 +338,10 @@ def get_prompt_for_image_describepicture_сс(
         описание и возвращает описание изображения
 
     Args:
-        name_router (str): Имя роутера для записи в лог
         driver (_type_): драйвер для селениума
         image_path (str): путь до картинки для описания
-        description_url (str): URL сайта для описания изображения
-        error_logging (Logger): логгер для записи в лог файл
+        description_url (LoggingData): URL сайта для описания изображения
+        logging_data (Logger): класс содержащий в себе логгер и имя роутера для записи в лог
 
     Returns:
         ResponseData: Объект с результатом запроса.
@@ -401,15 +396,16 @@ def get_prompt_for_image_describepicture_сс(
             status=200,
         )
     except Exception as err:
-        error_logging.exception(
+        logging_data.error_logger.exception(
             msg=format_message(
-                name_router=name_router,
+                name_router=logging_data.router_name,
                 method="<unknown>",
                 status=0,
                 url=description_url,
                 error_text=err,
             )
         )
+
         return ResponseData(
             error=messages.NETWORK_ERROR,
             url=description_url,

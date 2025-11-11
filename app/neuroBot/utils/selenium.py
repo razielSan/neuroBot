@@ -8,23 +8,23 @@ from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 
 from erros_handlers.format import format_message
+from core.response import LoggingData
 
 
 def create_selenium_driver(
-    name_router: str,
+    # name_router: str,
     driver_path: str,
     add_arument: List[str],
-    error_logging: Logger,
+    logging_data: LoggingData,
     automatisation: bool = True,
     browser: str = "chrome",
 ) -> ResponseData:
     """Создаем driver для selenium
 
     Args:
-        name_router (str): Имя роутера для записи в лог
         driver_path (str): Путь до папки с драйвером
         add_arument (List[str]): Список аргументов для драйвера
-        error_logging (Logger): Логгер для записи в лог файл
+        logging_data (LoggingData): Класс содержащий логгер и имя роутера для записи в лог
         automatisation (bool, optional): Отключаем флаги автоматизации(True/False)
         True - по умолчанию
         browser (str, optional): Имя браузера("chrome")
@@ -59,16 +59,16 @@ def create_selenium_driver(
                 message=driver, status=0, method="<unkown>", url="<unknown>"
             )
     except Exception as err:
-        print("hlll")
-        error_logging.exception(
+        logging_data.error_logger.exception(
             msg=format_message(
-                name_router=name_router,
+                name_router=logging_data.router_name,
                 method="<unknown>",
                 status=0,
                 url="<unknown>",
                 error_text=f"Произошла обшибка при создании драйвера - {err}",
             )
         )
+
         return ResponseData(
             error=messages.SERVER_ERROR,
             url="<unknown>",

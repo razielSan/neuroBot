@@ -8,7 +8,7 @@ from settings.response import messages
 from erros_handlers.main import error_handler_for_the_website
 
 
-from core.response import ResponseData
+from core.response import ResponseData, LoggingData
 
 
 async def get_image_description_by_immaga(
@@ -17,8 +17,7 @@ async def get_image_description_by_immaga(
     url_tags: str,
     path_img: Path,
     session: aiohttp.ClientSession,
-    error_logging: Logger,
-    name_router: Optional[str] = None,
+    logging_data: LoggingData,
     language="en",
     limit=-1,
 ) -> ResponseData:
@@ -29,8 +28,7 @@ async def get_image_description_by_immaga(
         upload_endpoint (str): URL для получения uplooad_image_id картинки
         url_tags (str): URL для описание изображения
         path_img (Path): Путь до картинки для описания изображений
-        session (ClientSession): сессия для запроса
-        error_logging (Logger): логгер для записи в лог файл
+        logging_data (LoggingData): Класс содержащий в себе логгер и имя роутера для записи в лог
         name_router (str, Optional): Имя роутера для записи в лог файл при ошибке(По умолчанию Nonr)
         language (str, optional): Язык описания изображений.По умолчанию английский
         limit (int, optional): Количество описаний.По умолчанию максимальное
@@ -57,8 +55,7 @@ async def get_image_description_by_immaga(
                 },
                 data={"image": file},
                 method="POST",
-                name_router=name_router,
-                error_logging=error_logging,
+                logging_data=logging_data,
             )
 
         if response.error:
@@ -75,8 +72,7 @@ async def get_image_description_by_immaga(
             headers={
                 "Authorization": f"Basic {key_autorization}",
             },
-            name_router=name_router,
-            error_logging=error_logging,
+            logging_data=logging_data,
         )
         if response_image_description.error:
             return response_image_description
@@ -99,9 +95,9 @@ async def get_image_description_by_immaga(
             url=response_image_description.url,
         )
     except Exception as err:
-        error_logging.exception(
+        logging_data.error_logger.exception(
             msg=format_message(
-                name_router=name_router,
+                name_router=logging_data.router_name,
                 method="POST",
                 url=upload_endpoint,
                 status=0,

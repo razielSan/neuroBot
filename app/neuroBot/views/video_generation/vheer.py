@@ -18,10 +18,8 @@ from aiogram.filters.state import StateFilter
 from neuroBot.extensions import (
     video_gen_vheer_settings,
     bot,
-    bot_settings,
     get_start_button_neuroBot,
-    warning_logger,
-    video_generation_error_logger,
+    logging_data,
 )
 from utils.keyboards_utils import get_reply_cancel_button, get_total_buttons_inline_kb
 from core.config import InlineKeyboardData
@@ -199,14 +197,13 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         progress_task = loop.run_in_executor(
             None,
             create_video_by_is_vheer,
-            bot_settings.BOT_LOGGING_ERROR_NAME_3,
             video_gen_vheer_settings.VIDEO_URL,
             path_image,
             video_path,
             video_gen_vheer_settings.VIDEO_DATA,
             prompt,
             progress_update,
-            video_generation_error_logger,
+            logging_data.BOT_ROUTER_NAME["video_generation"],
             description_url,
         )
 
@@ -304,9 +301,11 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             # Для безопасного ожидания ответа
             msg: ResponseData = await asyncio.wrap_future(progress_task)
         except Exception as e:
-            video_generation_error_logger.exception(
+            logging_data.BOT_ROUTER_NAME["video_generation"].error_logger.exception(
                 format_message(
-                    name_router=bot_settings.BOT_LOGGING_ERROR_NAME_3,
+                    name_router=logging_data.BOT_ROUTER_NAME[
+                        "video_generation"
+                    ].router_name,
                     method="<unknown>",
                     error_text=f"Ошибка при генерации видео (vheer): {e}",
                     status=0,
@@ -344,9 +343,16 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             # Удаляем видео и фото
             delete_data(
                 path=video_path,
-                warning_logger=warning_logger,
+                warning_logger=logging_data.BOT_ROUTER_NAME[
+                    "video_generation"
+                ].warning_logger,
             )
-            delete_data(path=path_image, warning_logger=warning_logger)
+            delete_data(
+                path=path_image,
+                warning_logger=logging_data.BOT_ROUTER_NAME[
+                    "video_generation"
+                ].warning_logger,
+            )
 
             await bot.send_message(
                 chat_id=message.chat.id,
@@ -360,9 +366,16 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             # Удаляем видео и фото
             delete_data(
                 path=video_path,
-                warning_logger=warning_logger,
+                warning_logger=logging_data.BOT_ROUTER_NAME[
+                    "video_generation"
+                ].warning_logger,
             )
-            delete_data(path=path_image, warning_logger=warning_logger)
+            delete_data(
+                path=video_path,
+                warning_logger=logging_data.BOT_ROUTER_NAME[
+                    "video_generation"
+                ].warning_logger,
+            )
 
             await bot.send_message(
                 chat_id=message.chat.id,

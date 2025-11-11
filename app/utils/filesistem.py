@@ -31,4 +31,3 @@ def delete_data(
         message: str = f"Ошибка при удалении {path}: {err}"
         if warning_logger:
             warning_logger.exception(msg=message)
-        print(message)

@@ -11,11 +11,9 @@ from pathlib import Path
 from neuroBot.extensions import (
     img_desc_imagga_settings,
     bot,
-    bot_settings,
-    image_description_error_logger,
-    warning_logger,
     get_start_buttons_inline_menu_for_image_description,
     get_start_button_neuroBot,
+    logging_data,
 )
 from neuroBot.bot_functions.image_description import get_image_description_by_immaga
 from utils.keyboards_utils import get_reply_cancel_button
@@ -72,9 +70,9 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
 
 @imagga_img_desc_router.message(ImaggaImgDescFSM.spam, F.text)
 async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) -> None:
-    """ 
-        Работа с FSM ImaggaImgDescFSM.
-        Отправляет пользователю сообщение если был введен текс при обработке запроса.
+    """
+    Работа с FSM ImaggaImgDescFSM.
+    Отправляет пользователю сообщение если был введен текс при обработке запроса.
     """
 
     await message.reply(text=messages.WAIT_MESSAGE)
@@ -87,8 +85,8 @@ async def add_prompt_for_imagga(
     state: FSMContext,
 ) -> None:
     """
-        Работса с FSM ImaggaImgDescFSM.
-        Отправляет пользователю анализ изображения.
+    Работса с FSM ImaggaImgDescFSM.
+    Отправляет пользователю анализ изображения.
     """
 
     if message.content_type == ContentType.PHOTO:
@@ -116,8 +114,7 @@ async def add_prompt_for_imagga(
             url_tags=img_desc_imagga_settings.URL_TAGS,
             path_img=path_img,
             session=session,
-            error_logging=image_description_error_logger,
-            name_router=bot_settings.BOT_LOGGING_ERROR_NAME_1,
+            logging_data=logging_data.BOT_ROUTER_NAME["image_description"],
             language="ru",
             limit=15,
         )
@@ -132,7 +129,7 @@ async def add_prompt_for_imagga(
             # Удаляем изоабражение
             delete_data(
                 path=path_img,
-                warning_logger=warning_logger,
+                warning_logger=logging_data.BOT_ROUTER_NAME["image_description"].warning_logger,
             )
         else:
             await state.set_state(ImaggaImgDescFSM.prompt)
