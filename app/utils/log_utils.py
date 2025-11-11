@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Callable
 from pathlib import Path
 from logging import (
     Formatter,
@@ -11,6 +11,7 @@ from logging import (
     WARNING,
 )
 from sys import stdout
+from core.response import LoggingData
 
 
 def setup_bot_logging(
@@ -104,3 +105,41 @@ def setup_bot_logging(
         error_logger.addHandler(stream_handler)
 
     return info_logger, warning_logger, error_logger
+
+
+def init_loggers(
+    bot_name: str,
+    list_router_name: List[str],
+    setup_bot_logging: Callable,
+    log_format: str,
+    date_format: str,
+    base_path: str,
+    log_data,
+):
+    info, warning, error = setup_bot_logging(
+        name=bot_name,
+        base_path=base_path,
+        log_format=log_format,
+        date_format=date_format,
+    )
+    log_data.BOT_ROUTER_NAME[bot_name] = LoggingData(
+        info_logger=info,
+        warning_logger=warning,
+        error_logger=error,
+        router_name=bot_name,
+    )
+
+    for router_name in list_router_name:
+        info, warning, error = setup_bot_logging(
+            name=bot_name,
+            base_path=base_path,
+            router_name=router_name,
+            log_format=log_format,
+            date_format=date_format,
+        )
+        log_data.BOT_ROUTER_NAME[router_name] = LoggingData(
+            info_logger=info,
+            warning_logger=warning,
+            error_logger=error,
+            router_name=f"{bot_name}_{router_name}",
+        )
