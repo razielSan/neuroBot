@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
 
-from utils.log_utils import setup_bot_logging, init_loggers
+from utils.log_utils import setup_bot_logging, init_loggers, get_loggers
 from utils.keyboards_utils import (
     get_total_buttons_reply_kb,
     get_total_buttons_inline_kb,
@@ -11,7 +11,7 @@ from neuroBot.configuration.video_generation import VheerVideoGeneration
 from settings.response import settings
 from core.config import InlineKeyboardData
 from neuroBot.configuration.selenium import SeleniumSettings
-from neuroBot.configuration.logging import LoggerSettings
+from core.logging import LoggerStorage
 
 
 # Настройки бота
@@ -27,7 +27,7 @@ bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
 # Создаем диспетчер для бота
 dp: Dispatcher = Dispatcher()
 
-logging_data = LoggerSettings()
+logging_data = LoggerStorage()
 
 
 # Создание кнопок для общих вызовов
@@ -75,6 +75,27 @@ init_loggers(
     ],
     setup_bot_logging=setup_bot_logging,
     log_data=logging_data,
+)
+
+# Достаем логгеры для каждого отдельного роутера
+neurobot_main_logger = get_loggers(
+    router_name=bot_settings.BOT_NAME,
+    logging_data=logging_data,
+)
+
+neurobot_image_description_logger = get_loggers(
+    router_name=bot_settings.BOT_ROUTER_NAME_1,
+    logging_data=logging_data,
+)
+
+neurobot_image_generation_logger = get_loggers(
+    router_name=bot_settings.BOT_ROUTER_NAME_2,
+    logging_data=logging_data,
+)
+
+neurobot_video_generation_logger = get_loggers(
+    router_name=bot_settings.BOT_ROUTER_NAME_3,
+    logging_data=logging_data,
 )
 
 

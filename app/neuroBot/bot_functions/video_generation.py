@@ -20,7 +20,6 @@ from neuroBot.extensions import video_gen_vheer_settings
 
 
 def create_video_by_is_vheer(
-    # name_router: str,
     url: str,
     image_path: str,
     video_path: str,
@@ -168,7 +167,7 @@ def create_video_by_is_vheer(
         update_progress()
 
         # Ждём появления <video> — сайт сначала генерирует blob, поэтому даём запас времени
-        video_el: WebElement = WebDriverWait(driver, 400).until(
+        video_el: WebElement = WebDriverWait(driver, 300).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, "div.h-full.relative > video")
             )
@@ -186,7 +185,6 @@ def create_video_by_is_vheer(
         )
 
         if video_data.startswith("ERROR:"):
-            driver.quit()
             return ResponseData(
                 error="Не удалось скачать видео: " + video_data,
                 url=url,
@@ -227,7 +225,7 @@ def create_video_by_is_vheer(
         )
 
         return ResponseData(
-            error=messages.NETWORK_ERROR,
+            error=messages.SERVER_ERROR,
             url=url,
             status=0,
             method="<unknown>",

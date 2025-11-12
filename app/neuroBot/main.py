@@ -6,7 +6,7 @@ from neuroBot.extensions import (
     bot_settings,
     img_desc_imagga_settings,
     video_gen_vheer_settings,
-    logging_data,
+    neurobot_main_logger,
 )
 
 
@@ -24,6 +24,7 @@ ensure_derictories(
     img_desc_imagga_settings.PATH_TO_IMAGGA_IMAGES_DESCRIPTION,
     video_gen_vheer_settings.PATH_TO_IMAGE_VHEER,
     video_gen_vheer_settings.PATH_TO_VIDEO_VHEER,
+    # info_logger=neurobot_main_logger.info_logger,
 )
 
 
@@ -47,13 +48,13 @@ async def run_bot() -> None:
         # Создаем глобальную сессию для всего бота. Будет доступ в роутерах через
         # название указанное ниже
 
-        logging_data.BOT_ROUTER_NAME["neuroBot"].info_logger.info(
+        neurobot_main_logger.info_logger.info(
             f"{bot_settings.BOT_NAME} запущен"
         )
         async with aiohttp.ClientSession() as session:
             dp["session"] = session
             await dp.start_polling(bot)
     except Exception as err:
-        logging_data.BOT_ROUTER_NAME["neuroBot"].error_logger.exception(
+        neurobot_main_logger.error_logger.exception(
             f"Критическая ошибка при работа бота {bot_settings.BOT_NAME}: {err}"
         )

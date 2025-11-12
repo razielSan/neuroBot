@@ -1,17 +1,17 @@
 from neuroBot.middleware.errors_middleware import RouterErrorMiddleware
 from neuroBot.views.main import main_router
 
-from neuroBot.extensions import logging_data
+from neuroBot.extensions import neurobot_main_logger
 
 
 main_router.message.middleware(
     RouterErrorMiddleware(
-        logger=logging_data.BOT_ROUTER_NAME["neuroBot"].error_logger,
+        neurobot_main_logger.error_logger
     )
 )
 
 main_router.callback_query.middleware(
     RouterErrorMiddleware(
-       logger=logging_data.BOT_ROUTER_NAME["neuroBot"].error_logger,
+        neurobot_main_logger,
     )
 )

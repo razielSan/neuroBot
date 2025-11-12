@@ -13,7 +13,7 @@ from neuroBot.extensions import (
     bot,
     get_start_buttons_inline_menu_for_image_description,
     get_start_button_neuroBot,
-    logging_data,
+    neurobot_image_description_logger,
 )
 from neuroBot.bot_functions.image_description import get_image_description_by_immaga
 from utils.keyboards_utils import get_reply_cancel_button
@@ -114,7 +114,7 @@ async def add_prompt_for_imagga(
             url_tags=img_desc_imagga_settings.URL_TAGS,
             path_img=path_img,
             session=session,
-            logging_data=logging_data.BOT_ROUTER_NAME["image_description"],
+            logging_data=neurobot_image_description_logger,
             language="ru",
             limit=15,
         )
@@ -128,10 +128,15 @@ async def add_prompt_for_imagga(
             )
             # Удаляем изоабражение
             delete_data(
-                path=path_img,
-                warning_logger=logging_data.BOT_ROUTER_NAME["image_description"].warning_logger,
+                list_path=[path_img],
+                warning_logger=neurobot_image_description_logger.warning_logger,
             )
         else:
+            delete_data(
+                list_path=[path_img],
+                warning_logger=neurobot_image_description_logger.warning_logger,
+            )
+
             await state.set_state(ImaggaImgDescFSM.prompt)
             await message.answer(
                 text=f"{img_description.error}\n\nСкидывайте, снова , картинку для анализа",

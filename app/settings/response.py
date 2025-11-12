@@ -9,7 +9,7 @@ messages: DefaultMessages = DefaultMessages()
 
 # Создаем глобальные логгеры для всего приложения
 root_info_logger, root_warning_logger, root_error_logger = setup_bot_logging(
-    name=settings.BOT_ROOT_NAME,
+    bot_name=settings.BOT_ROOT_NAME,
     base_path=settings.PATH_LOG_FOLDER,
     root_path=True,
     date_format=settings.DATE_FORMAT,

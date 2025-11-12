@@ -19,7 +19,7 @@ from neuroBot.extensions import (
     video_gen_vheer_settings,
     bot,
     get_start_button_neuroBot,
-    logging_data,
+    neurobot_video_generation_logger,
 )
 from utils.keyboards_utils import get_reply_cancel_button, get_total_buttons_inline_kb
 from core.config import InlineKeyboardData
@@ -203,7 +203,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             video_gen_vheer_settings.VIDEO_DATA,
             prompt,
             progress_update,
-            logging_data.BOT_ROUTER_NAME["video_generation"],
+            neurobot_video_generation_logger,
             description_url,
         )
 
@@ -301,11 +301,9 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             # Для безопасного ожидания ответа
             msg: ResponseData = await asyncio.wrap_future(progress_task)
         except Exception as e:
-            logging_data.BOT_ROUTER_NAME["video_generation"].error_logger.exception(
+            neurobot_video_generation_logger.error_logger.exception(
                 format_message(
-                    name_router=logging_data.BOT_ROUTER_NAME[
-                        "video_generation"
-                    ].router_name,
+                    name_router=neurobot_video_generation_logger.router_name,
                     method="<unknown>",
                     error_text=f"Ошибка при генерации видео (vheer): {e}",
                     status=0,
@@ -342,16 +340,8 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
             # Удаляем видео и фото
             delete_data(
-                path=video_path,
-                warning_logger=logging_data.BOT_ROUTER_NAME[
-                    "video_generation"
-                ].warning_logger,
-            )
-            delete_data(
-                path=path_image,
-                warning_logger=logging_data.BOT_ROUTER_NAME[
-                    "video_generation"
-                ].warning_logger,
+                list_path=[video_path, path_image],
+                warning_logger=neurobot_video_generation_logger.warning_logger,
             )
 
             await bot.send_message(
@@ -365,16 +355,8 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
             # Удаляем видео и фото
             delete_data(
-                path=video_path,
-                warning_logger=logging_data.BOT_ROUTER_NAME[
-                    "video_generation"
-                ].warning_logger,
-            )
-            delete_data(
-                path=video_path,
-                warning_logger=logging_data.BOT_ROUTER_NAME[
-                    "video_generation"
-                ].warning_logger,
+                list_path=[video_path, path_image],
+                warning_logger=neurobot_video_generation_logger.warning_logger,
             )
 
             await bot.send_message(
