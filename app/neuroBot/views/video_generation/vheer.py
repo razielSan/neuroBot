@@ -45,7 +45,7 @@ class VheerVideoGenerationFSM(StatesGroup):
 
 @vheer_router.callback_query(
     StateFilter(None),
-    F.data == video_gen_vheer_settings.CALLBACK_BUTTON_NAME,
+    F.data == video_gen_vheer_settings.CALLBACK_BUTTON_DATA,
 )
 async def vheer(call: CallbackQuery, state: FSMContext) -> None:
     """Отправляет пользователю инлайн клавиатуру с доступными вариантам генерации видео."""

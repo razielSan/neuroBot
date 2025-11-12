@@ -9,8 +9,8 @@ class BotSettings(BaseSettings):
     """Настройки для бота."""
 
     # Основные параметры
-    BOT_NAME: str = "neuroBot" 
-    
+    BOT_NAME: str = "neuroBot"
+
     # Имена подлкючаемых роутеров
     BOT_ROUTER_NAME_1: str = f"{BOT_NAME}_image_description"
     BOT_ROUTER_REPLY_KB_NAME_1: str = "📝 Описание Изображений"
@@ -36,6 +36,5 @@ class BotSettings(BaseSettings):
 
     # Конфигурация
     model_config: SettingsConfigDict = SettingsConfigDict(
-        env_file=str(BOT_DIR / ".env"),
-        extra="ignore"
+        env_file=str(BOT_DIR / ".env"), extra="ignore"
     )

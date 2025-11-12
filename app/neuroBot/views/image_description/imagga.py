@@ -34,7 +34,7 @@ class ImaggaImgDescFSM(StatesGroup):
 
 @imagga_img_desc_router.callback_query(
     StateFilter(None),
-    F.data == img_desc_imagga_settings.CALLBACK_BUTTON_NAME,
+    F.data == img_desc_imagga_settings.CALLBACK_BUTTON_DATA,
 )
 async def immaga(
     call: CallbackQuery,

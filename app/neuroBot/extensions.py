@@ -43,8 +43,8 @@ get_start_button_neuroBot = get_total_buttons_reply_kb(
 get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
-            text=img_desc_imagga_settings.NAME_ROUTER,
-            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_NAME,
+            text=img_desc_imagga_settings.CALLBACK_BUTTON_TEXT,
+            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_DATA,
         ),
     ],
     quantity_button=1,
@@ -52,6 +52,17 @@ get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_k
 
 
 get_start_button_inline_menu_for_video_generation = get_total_buttons_inline_kb(
+    list_inline_kb_data=[
+        InlineKeyboardData(
+            text=video_gen_vheer_settings.CALLBACK_BUTTON_NAME,
+            callback_data=video_gen_vheer_settings.CALLBACK_BUTTON_DATA,
+        )
+    ],
+    quantity_button=1,
+)
+
+
+get_start_button_inline_menu_for_image_generation = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
             text=video_gen_vheer_settings.NAME_ROUTER,

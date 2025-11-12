@@ -5,13 +5,14 @@ from pydantic import BaseModel
 
 
 class VheerVideoGeneration(BaseModel):
-    """Модель генерации изображений для сайта https://vheer.com/."""
+    """Модель генерации видео для сайта https://vheer.com/."""
 
     TOTAL_STEP: int = (
         10  # Общее количество шагов для отслеживания прогресс загрузки видео
     )
-    NAME_ROUTER: str = "1⃣  vheer"
-    CALLBACK_BUTTON_NAME: str = "video_gen vheer"  # callback запись в инлайн клавиатуре
+    NAME_ROUTER: str = "vheer"
+    CALLBACK_BUTTON_NAME: str = "1⃣ vheer"  # callback запись в инлайн клавиатуре
+    CALLBACK_BUTTON_DATA: str = "video_gen vheer"
     VIDEO_URL: str = "https://vheer.com/app/image-to-video"
 
     # URL сайтов по описании изображений
