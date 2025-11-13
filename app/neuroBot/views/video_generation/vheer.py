@@ -2,6 +2,7 @@ from typing import Dict, Callable, Optional, List
 import asyncio
 from uuid import uuid4
 from pathlib import Path
+from asyncio import AbstractEventLoop
 
 from aiogram import Router, F
 from aiogram.types import (
@@ -29,6 +30,7 @@ from utils.fsm_utils import make_update_progress
 from utils.filesistem import delete_data
 from neuroBot.bot_functions.video_generation import create_video_by_is_vheer
 from erros_handlers.format import format_message
+from erros_handlers.helpers import run_safe_inf_executror
 
 vheer_router: Router = Router(name=video_gen_vheer_settings.NAME_ROUTER)
 
@@ -117,7 +119,7 @@ async def start_vheer_video_generation(call: CallbackQuery, state: FSMContext) -
         await state.update_data(description=True)
 
         await call.message.answer(
-            "Введите описание для изображения",
+            text=messages.IMAGE_DESCRIPTION_MESSAGE,
             reply_markup=get_reply_cancel_button(),
         )
 
@@ -133,7 +135,7 @@ async def add_description_for_vheer(message: Message, state: FSMContext) -> None
         await state.update_data(description=message.text)
 
     await message.answer(
-        "Скидывайте фотографию для создания видео",
+        text=messages.DROP_PHOTO_MESSAGE,
         reply_markup=get_reply_cancel_button(),
     )
     await state.set_state(VheerVideoGenerationFSM.image)
@@ -147,6 +149,10 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
     """
 
     if message.content_type == ContentType.PHOTO:
+        # Создаем переменные для путей чтобы в конце если они есть удалить видео и изображение
+        video_path = None
+        path_image = None
+
         await bot.send_message(
             chat_id=message.chat.id,
             text=messages.WAIT_MESSAGE,
@@ -159,7 +165,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         await state.update_data(counter_progress=0)
 
         # Создаем петлю
-        loop = asyncio.get_event_loop()
+        loop: AbstractEventLoop = asyncio.get_event_loop()
 
         # Функция для отслеживания прогресса запроса пользователя
         progress_update: Callable = make_update_progress(loop=loop, state=state)
@@ -194,17 +200,20 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         # Формируем prompt
         prompt: str = vheer_data.get("description", None) or "Картинка движется"
 
-        progress_task = loop.run_in_executor(
-            None,
-            create_video_by_is_vheer,
-            video_gen_vheer_settings.VIDEO_URL,
-            path_image,
-            video_path,
-            video_gen_vheer_settings.VIDEO_DATA,
-            prompt,
-            progress_update,
-            neurobot_video_generation_logger,
-            description_url,
+        progress_task = asyncio.create_task(
+            run_safe_inf_executror(
+                loop,
+                create_video_by_is_vheer,
+                video_gen_vheer_settings.VIDEO_URL,
+                path_image,
+                video_path,
+                video_gen_vheer_settings.VIDEO_DATA,
+                prompt,
+                progress_update,
+                neurobot_video_generation_logger,
+                description_url,
+                logging_data=neurobot_video_generation_logger,
+            )
         )
 
         # Общее количество шагов необходимое для запроса
@@ -238,6 +247,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         counter_description: int = 0  # счетчик для описания изображения
 
         # Встаем в цикл пока петля не завершится
+
         while not progress_task.done():
             # Делаем копию во избежания получения старых данных при сильной нагрузке
             data: Dict = dict(await state.get_data())
@@ -338,12 +348,6 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
                 reply_markup=ReplyKeyboardRemove(),
             )
 
-            # Удаляем видео и фото
-            delete_data(
-                list_path=[video_path, path_image],
-                warning_logger=neurobot_video_generation_logger.warning_logger,
-            )
-
             await bot.send_message(
                 chat_id=message.chat.id,
                 text=messages.START_BOT_MESSAGE,
@@ -351,13 +355,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             )
         else:
             await state.clear()
-            await message.answer(text=f"{msg.error}\n{messages.TRY_REPSONSE_MESAGE}")
-
-            # Удаляем видео и фото
-            delete_data(
-                list_path=[video_path, path_image],
-                warning_logger=neurobot_video_generation_logger.warning_logger,
-            )
+            await message.answer(text=f"{msg.error}\n{messages.TRY_REPSONSE_MESSAGE}")
 
             await bot.send_message(
                 chat_id=message.chat.id,
@@ -373,6 +371,13 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
                         ),
                     ]
                 ),
+            )
+
+        # Удаляем видео и фото
+        if video_path or path_image:
+            delete_data(
+                list_path=[video_path, path_image],
+                warning_logger=neurobot_video_generation_logger.warning_logger,
             )
 
     else:

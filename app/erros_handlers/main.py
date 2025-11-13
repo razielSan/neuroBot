@@ -1,5 +1,4 @@
-from typing import Dict, Optional
-from logging import Logger
+from typing import Dict
 import asyncio
 from erros_handlers.format import format_message
 
@@ -37,6 +36,7 @@ async def error_handler_for_the_website(
     method="GET",
     data=None,
     headers=None,
+    function_name=None,
 ) -> ResponseData:
     """
 
@@ -51,6 +51,7 @@ async def error_handler_for_the_website(
         method (str, optional): Метод запроса. 'POST' или "GET"
         data (_type_, optional): Данные для POST запроса
         headers (dict): Заголовки запроса
+        function_name (str): Имя функции в которой произошла ошибка
 
     Returns:
         ResponseData: Объект с результатом запроса.
@@ -101,6 +102,7 @@ async def error_handler_for_the_website(
                         status=resp.status,
                         url=url,
                         error_text=logg_error_str,
+                        function_name=function_name,
                     )
                 )
 
@@ -124,6 +126,7 @@ async def error_handler_for_the_website(
                         status=resp.status,
                         url=url,
                         error_text=logg_error_str,
+                        function_name=function_name,
                     )
                 )
 
@@ -163,10 +166,11 @@ async def error_handler_for_the_website(
         logging_data.error_logger.exception(
             msg=format_message(
                 name_router=logging_data.router_name,
-                method=resp.method,
-                status=resp.status,
+                method=method,
+                status=0,
                 url=url,
                 error_text=error_message,
+                function_name=function_name,
             )
         )
 
@@ -182,10 +186,11 @@ async def error_handler_for_the_website(
         logging_data.error_logger.exception(
             msg=format_message(
                 name_router=logging_data.router_name,
-                method=resp.method,
-                status=resp.status,
+                method=method,
+                status=0,
                 url=url,
                 error_text=error_message,
+                function_name=function_name,
             )
         )
 
@@ -201,10 +206,11 @@ async def error_handler_for_the_website(
         logging_data.error_logger.exception(
             msg=format_message(
                 name_router=logging_data.router_name,
-                method=resp.method,
-                status=resp.status,
+                method=method,
+                status=0,
                 url=url,
                 error_text=error_message,
+                function_name=function_name,
             )
         )
 

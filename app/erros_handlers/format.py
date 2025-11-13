@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 
 
 def format_message(
@@ -7,6 +7,7 @@ def format_message(
     status: Optional[int] = None,
     url: Optional[str] = None,
     error_text: Optional[str] = None,
+    function_name: Optional[str] = None,
 ) -> str:
     """Возвращает строку для записи в лог ошибок
 
@@ -16,6 +17,7 @@ def format_message(
         status (int): статус ответа
         url (str): URL запроса
         error_text (str): Текст ошибки
+        function: (str): Имя функции в которой произошла ошибка
 
     Returns:
         str: Возвращает строку для записи в лог ошибок
@@ -26,10 +28,12 @@ def format_message(
     status: int = status or 0
     url: str = url or "<unknown>"
     error_text: str = error_text or "<no text>"
+    function_name: str = function_name if function_name else "<unknown>"
 
     return (
         f"[{status}] {method} {url}\n"
         f"Router: {name_router}\n"
+        f"Function: {function_name}\n"
         f"Response:\n{error_text}\n"
         f"{'-'*80}"
     )

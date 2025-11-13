@@ -43,70 +43,54 @@ async def get_image_description_by_immaga(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-
-    try:
-        # Отправляем картинку на сайт для ее описания
-        with open(path_img, "rb") as file:
-            response: ResponseData = await error_handler_for_the_website(
-                session=session,
-                url=upload_endpoint,
-                headers={
-                    "Authorization": f"Basic {key_autorization}",
-                },
-                data={"image": file},
-                method="POST",
-                logging_data=logging_data,
-            )
-
-        if response.error:
-            return response
-
-        # Получаем upload_id картинки
-        upload_id: str = response.message["result"]["upload_id"]
-
-        # Делаем запрос на получение описание изображения
-        response_image_description: ResponseData = await error_handler_for_the_website(
+    # Отправляем картинку на сайт для ее описания
+    with open(path_img, "rb") as file:
+        response: ResponseData = await error_handler_for_the_website(
             session=session,
-            url=f"{url_tags}?image_upload_id="
-            f"{upload_id}&language={language}&limit={limit}",
+            url=upload_endpoint,
             headers={
                 "Authorization": f"Basic {key_autorization}",
             },
-            logging_data=logging_data,
-        )
-        if response_image_description.error:
-            return response_image_description
-
-        # Формируем данные для описания картинки
-        array_image_description: List = [
-            "Список возможных вариантов изображения на картинке:\n\n"
-        ]
-
-        for data in response_image_description.message["result"]["tags"]:
-            array_image_description.append(
-                f"{data['tag'][language].title()} ({data['confidence']:.3f}%) "
-            )
-
-        mess: str = "\n".join(array_image_description)
-        return ResponseData(
-            message=mess,
-            status=200,
-            method=response_image_description.method,
-            url=response_image_description.url,
-        )
-    except Exception as err:
-        logging_data.error_logger.exception(
-            msg=format_message(
-                name_router=logging_data.router_name,
-                method="POST",
-                url=upload_endpoint,
-                status=0,
-                error_text=err,
-            )
-        )
-        return ResponseData(
-            error=messages.SERVER_ERROR,
-            status=0,
-            url=upload_endpoint,
+            data={"image": file},
             method="POST",
+            logging_data=logging_data,
+            function_name=get_image_description_by_immaga.__name__,
         )
+
+    if response.error:
+        return response
+
+    # Получаем upload_id картинки
+    upload_id: str = response.message["result"]["upload_id"]
+
+    # Делаем запрос на получение описание изображения
+    response_image_description: ResponseData = await error_handler_for_the_website(
+        session=session,
+        url=f"{url_tags}?image_upload_id="
+        f"{upload_id}&language={language}&limit={limit}",
+        headers={
+            "Authorization": f"Basic {key_autorization}",
+        },
+        logging_data=logging_data,
+        function_name=get_image_description_by_immaga.__name__,
+    )
+    if response_image_description.error:
+        return response_image_description
+
+    # Формируем данные для описания картинки
+    array_image_description: List = [
+        "Список возможных вариантов изображения на картинке:\n\n"
+    ]
+
+    for data in response_image_description.message["result"]["tags"]:
+        array_image_description.append(
+            f"{data['tag'][language].title()} ({data['confidence']:.3f}%) "
+        )
+
+    mess: str = "\n".join(array_image_description)
+    return ResponseData(
+        message=mess,
+        status=200,
+        method=response_image_description.method,
+        url=response_image_description.url,
+    )

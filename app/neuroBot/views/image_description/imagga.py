@@ -1,12 +1,12 @@
-import aiohttp
 from uuid import uuid4
+from pathlib import Path
+
+import aiohttp
 from aiogram.types import Message, CallbackQuery, ContentType, ReplyKeyboardRemove
 from aiogram import Router, F
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from pathlib import Path
-
 
 from neuroBot.extensions import (
     img_desc_imagga_settings,
@@ -20,6 +20,7 @@ from utils.keyboards_utils import get_reply_cancel_button
 from core.response import ResponseData
 from settings.response import messages
 from utils.filesistem import delete_data
+from erros_handlers.decorator import safe_async_execution
 
 
 imagga_img_desc_router: Router = Router(name=img_desc_imagga_settings.NAME_ROUTER)
@@ -46,7 +47,7 @@ async def immaga(
     await call.message.edit_reply_markup(reply_markup=None)
 
     await call.message.answer(
-        "Скидывайте картинку для анализа",
+        text=messages.DROP_PHOTO_MESSAGE,
         reply_markup=get_reply_cancel_button(),
     )
 
@@ -59,12 +60,11 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
     await state.clear()
     await message.answer(
         text=messages.CANCEL_MESSAGE,
-        reply_markup=get_start_button_neuroBot,
     )
     await bot.send_message(
         chat_id=message.chat.id,
-        text=messages.OPTIONS_BOT_MESSAGE,
-        reply_markup=get_start_buttons_inline_menu_for_image_description,
+        text=messages.START_BOT_MESSAGE,
+        reply_markup=get_start_button_neuroBot,
     )
 
 
@@ -90,6 +90,7 @@ async def add_prompt_for_imagga(
     """
 
     if message.content_type == ContentType.PHOTO:
+        path_img = None
 
         # Встаем в состояние spam для ответа пользователю при запросе
         await state.set_state(ImaggaImgDescFSM.spam)
@@ -107,8 +108,14 @@ async def add_prompt_for_imagga(
         # Скачиваем скиданную пользователем картинку для анализа
         await bot.download(file=message.photo[-1].file_id, destination=path_img)
 
+        # Оборачиваем функцию в декоратор для отлавливания всех возможных ошибок
+        decorator_function = await safe_async_execution(
+            logging_data=neurobot_image_description_logger,
+        )
+        func = decorator_function(get_image_description_by_immaga)
+
         # Делаем запрос на получение описание изображения
-        img_description: ResponseData = await get_image_description_by_immaga(
+        img_description: ResponseData = await func(
             key_autorization=img_desc_imagga_settings.ID_IMAGGA_AUTHORIZATION,
             upload_endpoint=img_desc_imagga_settings.UPLOAD_ENDPOINT,
             url_tags=img_desc_imagga_settings.URL_TAGS,
@@ -126,21 +133,18 @@ async def add_prompt_for_imagga(
                 text="Главное меню бота",
                 reply_markup=get_start_button_neuroBot,
             )
-            # Удаляем изоабражение
-            delete_data(
-                list_path=[path_img],
-                warning_logger=neurobot_image_description_logger.warning_logger,
-            )
         else:
-            delete_data(
-                list_path=[path_img],
-                warning_logger=neurobot_image_description_logger.warning_logger,
-            )
 
             await state.set_state(ImaggaImgDescFSM.prompt)
             await message.answer(
-                text=f"{img_description.error}\n\nСкидывайте, снова , картинку для анализа",
+                text=f"{img_description.error}\n\n{messages.TRY_REPSONSE_MESSAGE}",
                 reply_markup=get_reply_cancel_button(),
+            )
+        # Удаляем изоабражение
+        if path_img:
+            delete_data(
+                list_path=[path_img],
+                warning_logger=neurobot_image_description_logger.warning_logger,
             )
 
     else:

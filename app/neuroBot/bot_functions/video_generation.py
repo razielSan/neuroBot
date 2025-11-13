@@ -2,7 +2,6 @@ from typing import Optional, Callable, Dict
 import time
 import os
 import base64
-from logging import Logger
 from random import choice
 
 from selenium.webdriver.common.by import By
@@ -17,6 +16,7 @@ from core.response import ResponseData, LoggingData
 from settings.response import messages
 from erros_handlers.format import format_message
 from neuroBot.extensions import video_gen_vheer_settings
+from erros_handlers.decorator import safe_sync_execution
 
 
 def create_video_by_is_vheer(
@@ -60,6 +60,9 @@ def create_video_by_is_vheer(
         # 1 Обновляем прогресс при заходе в функцию
         update_progress()
 
+        # decorator_function = await safe_async_execution(logging_data=logging_data)
+        # func = decorator_function(create_selenium_driver)
+
         # Создаем driver
         response_driver: ResponseData = create_selenium_driver(
             driver_path=chrome_selenium_settings.PATH_CHROME_DRIVER,
@@ -75,11 +78,19 @@ def create_video_by_is_vheer(
 
         # Если есть URL для сайта с описанием изображения заходим в него
         if description_url:
-            resonse_description: ResponseData = get_prompt_for_image_describepicture_сс(
+            
+            # Оборачиваем функцию в декоратор для отлова всех возможных ошибок
+            decorator_function = safe_sync_execution(
+                logging_data=logging_data,
+            )
+            func = decorator_function(
+                get_prompt_for_image_describepicture_сс
+            )
+
+            resonse_description: ResponseData = func(
                 driver=driver,
                 image_path=image_path,
                 description_url=description_url,
-                logging_data=logging_data,
             )
 
             # Если сайт по описанию изображения выдал ошибку используем стандартное описание
@@ -104,6 +115,7 @@ def create_video_by_is_vheer(
                     status=0,
                     url=url,
                     error_text=f"Ошибка при доступе к сайту {url} - {err}",
+                    function_name=create_video_by_is_vheer.__name__,
                 )
             )
 
@@ -176,8 +188,6 @@ def create_video_by_is_vheer(
         # 7 Обновляем прогресс(после того когда видео сгенерировалось) для вывода пользователю
         update_progress()
 
-        # settings.video_generation.vheer.VIDEO_DATA,
-
         # Достаём blob как base64 через JavaScript
         video_data: str = driver.execute_async_script(
             video_data,
@@ -213,23 +223,6 @@ def create_video_by_is_vheer(
             status=200,
         )
 
-    except Exception as err:
-        logging_data.error_logger.exception(
-            msg=format_message(
-                name_router=logging_data.router_name,
-                method="<unknown>",
-                status=0,
-                url=description_url,
-                error_text=err,
-            )
-        )
-
-        return ResponseData(
-            error=messages.SERVER_ERROR,
-            url=url,
-            status=0,
-            method="<unknown>",
-        )
     finally:
         if driver:
             try:
@@ -328,7 +321,6 @@ def get_prompt_for_image_describepicture_сс(
     driver: webdriver.Chrome,
     image_path: str,
     description_url: str,
-    logging_data: LoggingData,
 ) -> ResponseData:
     """
         Заходит на сайт "https://describepicture.cc/ru, загружает
@@ -351,62 +343,43 @@ def get_prompt_for_image_describepicture_сс(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-    try:
-        # Заходит на сайт
-        driver.get(description_url)
-        # Ждет пока не прогрузийтся страница
+    driver.get(description_url)
+    # Ждет пока не прогрузийтся страница
 
-        wait: WebDriverWait = WebDriverWait(driver, 60)
+    wait: WebDriverWait = WebDriverWait(driver, 60)
 
-        # Загружает картинку на сайт
-        image_input: WebElement = wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
-        )
-        path: str = os.path.abspath(image_path)
-        image_input.send_keys(path)
+    # Загружает картинку на сайт
+    image_input: WebElement = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
+    )
+    path: str = os.path.abspath(image_path)
+    image_input.send_keys(path)
 
-        # Ждем чтобы картинка прогрузилась
-        time.sleep(5)
+    # Ждем чтобы картинка прогрузилась
+    time.sleep(5)
 
-        # Кликаем по кнопке с генерацие описания
-        generate_button = driver.find_element(
-            By.CSS_SELECTOR, "button[class*='bg-gradient-to-r']"
-        )
-        generate_button.click()
+    # Кликаем по кнопке с генерацие описания
+    generate_button = driver.find_element(
+        By.CSS_SELECTOR, "button[class*='bg-gradient-to-r']"
+    )
+    generate_button.click()
 
-        # Ждем 10 секунд чтобы генерация завершилась
-        time.sleep(10)
+    # Ждем 10 секунд чтобы генерация завершилась
+    time.sleep(10)
 
-        # Достаем текст описания изображения
-        text_area: WebElement = wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.CSS_SELECTOR,
-                    "textarea[class*='rounded-lg']",
-                )
+    # Достаем текст описания изображения
+    text_area: WebElement = wait.until(
+        EC.presence_of_element_located(
+            (
+                By.CSS_SELECTOR,
+                "textarea[class*='rounded-lg']",
             )
         )
+    )
 
-        return ResponseData(
-            message=text_area.text,
-            url=description_url,
-            method="GET",
-            status=200,
-        )
-    except Exception as err:
-        logging_data.error_logger.exception(
-            msg=format_message(
-                name_router=logging_data.router_name,
-                method="<unknown>",
-                status=0,
-                url=description_url,
-                error_text=err,
-            )
-        )
-
-        return ResponseData(
-            error=messages.NETWORK_ERROR,
-            url=description_url,
-            status=0,
-            method="<unknown>",
-        )
+    return ResponseData(
+        message=text_area.text,
+        url=description_url,
+        method="GET",
+        status=200,
+    )

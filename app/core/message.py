@@ -6,7 +6,9 @@ class DefaultMessages(BaseModel):
 
     START_BOT_MESSAGE: str = "🌍 Главное меню бота"
     OPTIONS_BOT_MESSAGE: str = "🚦 Доступные варианты"
-    TRY_REPSONSE_MESAGE: str = "👣 Попробуйте, снова, сделать запрос..."
+    DROP_PHOTO_MESSAGE: str = "🏞 Скидывайте фотографию"
+    IMAGE_DESCRIPTION_MESSAGE: str = "📝 Введите описание для изображения"
+    TRY_REPSONSE_MESSAGE: str = "👣 Попробуйте, снова, сделать запрос..."
     WAIT_MESSAGE: str = "⏳ Идет обработка запроса..."
     CANCEL_MESSAGE: str = "❌ Отменены все действия"
     NOT_PHOTO_MESSAGE: str = (

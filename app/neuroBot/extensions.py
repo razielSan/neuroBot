@@ -8,6 +8,7 @@ from utils.keyboards_utils import (
 from neuroBot.configuration.config import BotSettings
 from neuroBot.configuration.image_description import ImaggaImageDescription
 from neuroBot.configuration.video_generation import VheerVideoGeneration
+from neuroBot.configuration.image_generation import PollinationsImageGeneration
 from settings.response import settings
 from core.config import InlineKeyboardData
 from neuroBot.configuration.selenium import SeleniumSettings
@@ -20,6 +21,7 @@ bot_settings: BotSettings = BotSettings()
 # Настройки моделей
 img_desc_imagga_settings: ImaggaImageDescription = ImaggaImageDescription()
 video_gen_vheer_settings: VheerVideoGeneration = VheerVideoGeneration()
+img_gen_pollinations_settings: PollinationsImageGeneration = PollinationsImageGeneration()
 
 # Создаем бота
 bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
@@ -65,8 +67,8 @@ get_start_button_inline_menu_for_video_generation = get_total_buttons_inline_kb(
 get_start_button_inline_menu_for_image_generation = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
-            text=video_gen_vheer_settings.NAME_ROUTER,
-            callback_data=video_gen_vheer_settings.CALLBACK_BUTTON_NAME,
+            text=img_gen_pollinations_settings.CALLBACK_BUTTON_TEXT,
+            callback_data=img_gen_pollinations_settings.CALLBACK_BUTTON_DATA,
         )
     ],
     quantity_button=1,
