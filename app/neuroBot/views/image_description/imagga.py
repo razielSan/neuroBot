@@ -11,7 +11,6 @@ from aiogram.fsm.state import State, StatesGroup
 from neuroBot.extensions import (
     img_desc_imagga_settings,
     bot,
-    get_start_buttons_inline_menu_for_image_description,
     get_start_button_neuroBot,
     neurobot_image_description_logger,
 )
@@ -23,7 +22,7 @@ from utils.filesistem import delete_data
 from erros_handlers.decorator import safe_async_execution
 
 
-imagga_img_desc_router: Router = Router(name=img_desc_imagga_settings.NAME_ROUTER)
+router: Router = Router(name=img_desc_imagga_settings.NAME_ROUTER)
 
 
 class ImaggaImgDescFSM(StatesGroup):
@@ -33,7 +32,7 @@ class ImaggaImgDescFSM(StatesGroup):
     prompt: State = State()
 
 
-@imagga_img_desc_router.callback_query(
+@router.callback_query(
     StateFilter(None),
     F.data == img_desc_imagga_settings.CALLBACK_BUTTON_DATA,
 )
@@ -54,7 +53,7 @@ async def immaga(
     await state.set_state(ImaggaImgDescFSM.prompt)
 
 
-@imagga_img_desc_router.message(ImaggaImgDescFSM.prompt, F.text == "Отмена")
+@router.message(ImaggaImgDescFSM.prompt, F.text == "Отмена")
 async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) -> None:
     """Работа с FSM ImaggaImgDescFSM.Отменяет все действияю"""
     await state.clear()
@@ -68,7 +67,7 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
     )
 
 
-@imagga_img_desc_router.message(ImaggaImgDescFSM.spam, F.text)
+@router.message(ImaggaImgDescFSM.spam, F.text)
 async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) -> None:
     """
     Работа с FSM ImaggaImgDescFSM.
@@ -78,7 +77,7 @@ async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) 
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
-@imagga_img_desc_router.message(ImaggaImgDescFSM.prompt, F)
+@router.message(ImaggaImgDescFSM.prompt, F)
 async def add_prompt_for_imagga(
     message: Message,
     session: aiohttp.ClientSession,

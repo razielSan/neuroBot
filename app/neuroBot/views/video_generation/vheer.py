@@ -32,7 +32,7 @@ from neuroBot.bot_functions.video_generation import create_video_by_is_vheer
 from erros_handlers.format import format_message
 from erros_handlers.helpers import run_safe_inf_executror
 
-vheer_router: Router = Router(name=video_gen_vheer_settings.NAME_ROUTER)
+router: Router = Router(name=video_gen_vheer_settings.NAME_ROUTER)
 
 
 class VheerVideoGenerationFSM(StatesGroup):
@@ -45,7 +45,7 @@ class VheerVideoGenerationFSM(StatesGroup):
     gen_description: State = State()  # Для определния готовности описания изображения
 
 
-@vheer_router.callback_query(
+@router.callback_query(
     StateFilter(None),
     F.data == video_gen_vheer_settings.CALLBACK_BUTTON_DATA,
 )
@@ -69,8 +69,8 @@ async def vheer(call: CallbackQuery, state: FSMContext) -> None:
     )
 
 
-@vheer_router.message(VheerVideoGenerationFSM.description, F.text == "Отмена")
-@vheer_router.message(VheerVideoGenerationFSM.image, F.text == "Отмена")
+@router.message(VheerVideoGenerationFSM.description, F.text == "Отмена")
+@router.message(VheerVideoGenerationFSM.image, F.text == "Отмена")
 async def cancel__vheer_video_generation_handler(
     message: Message, state: FSMContext
 ) -> None:
@@ -84,7 +84,7 @@ async def cancel__vheer_video_generation_handler(
     )
 
 
-@vheer_router.message(VheerVideoGenerationFSM.counter_progress, F.text)
+@router.message(VheerVideoGenerationFSM.counter_progress, F.text)
 async def get_message_for_vheer_video_generation(
     message: Message, state: FSMContext
 ) -> None:
@@ -96,7 +96,7 @@ async def get_message_for_vheer_video_generation(
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
-@vheer_router.callback_query(
+@router.callback_query(
     F.data.startswith("vg_vheer "),
 )
 async def start_vheer_video_generation(call: CallbackQuery, state: FSMContext) -> None:
@@ -124,7 +124,7 @@ async def start_vheer_video_generation(call: CallbackQuery, state: FSMContext) -
         )
 
 
-@vheer_router.message(VheerVideoGenerationFSM.description, F.text)
+@router.message(VheerVideoGenerationFSM.description, F.text)
 async def add_description_for_vheer(message: Message, state: FSMContext) -> None:
     """Работа с FSM VheerVideoGenerationFSM.Просит пользователя скинуть изображение"""
 
@@ -141,7 +141,7 @@ async def add_description_for_vheer(message: Message, state: FSMContext) -> None
     await state.set_state(VheerVideoGenerationFSM.image)
 
 
-@vheer_router.message(VheerVideoGenerationFSM.image, F)
+@router.message(VheerVideoGenerationFSM.image, F)
 async def add_photo_for_vheer(message: Message, state: FSMContext):
     """
     Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
@@ -355,7 +355,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             )
         else:
             await state.clear()
-            await message.answer(text=f"{msg.error}\n{messages.TRY_REPSONSE_MESSAGE}")
+            await message.answer(text=f"{msg.error}")
 
             await bot.send_message(
                 chat_id=message.chat.id,

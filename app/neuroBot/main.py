@@ -7,6 +7,7 @@ from neuroBot.extensions import (
     img_desc_imagga_settings,
     video_gen_vheer_settings,
     img_gen_pollinations_settings,
+    img_gen_caila_io_settings,
     neurobot_main_logger,
 )
 
@@ -26,6 +27,7 @@ ensure_derictories(
     video_gen_vheer_settings.PATH_TO_IMAGE_VHEER,
     video_gen_vheer_settings.PATH_TO_VIDEO_VHEER,
     img_gen_pollinations_settings.PATH_TO_POLLINATIONS_IMAGES_GENERATION,
+    img_gen_caila_io_settings.PATH_TO_CAILA_IMAGES_GENERATION
     # info_logger=neurobot_main_logger.info_logger,
 )
 

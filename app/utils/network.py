@@ -1,6 +1,6 @@
-import base64
-
 from aiohttp import ClientSession
+from typing import Optional
+import base64
 
 from erros_handlers.main import error_handler_for_the_website
 from core.response import LoggingData, ResponseData
@@ -11,22 +11,28 @@ async def get_and_save_image(
     path_img: str,
     session: ClientSession,
     logging_data: LoggingData,
-    gpt_image_1=None,
+    base_64: Optional[bool] = None,
 ) -> ResponseData:
     """_summary_
 
     Args:
-        url (str): _description_
-        path_img (str): _description_
-        session (ClientSession): _description_
-        logging_data (LoggingData): _description_
-        gpt_image_1 (_type_, optional): _description_. Defaults to None.
+        url (str): url для скачивания или строка в кодировке base64
+        path_img (str): Путь до картинки
+        session (ClientSession): сессия для запроса
+        logging_data (LoggingData): обьект класса LoggingData содержащий в себе логгер и имя роутера
+        base_64 (Optional[bool], optional): Проверка на кодировку base_64. По умолачанию None
 
     Returns:
-        _type_: _description_
+        ResponseData: Объект с результатом запроса.
+
+        Атрибуты ResponseData:
+            - message (Any | None): Данные успешного ответа (если запрос прошёл успешно).
+            - error (str | None): Описание ошибки, если запрос завершился неудачей.
+            - status (int): HTTP-код ответа. 0 — если ошибка возникла на клиентской стороне.
+            - url (str): URL, по которому выполнялся запрос.
+            - method (str): HTTP-метод, использованный при запросе.
     """
-    # try:
-    if gpt_image_1:
+    if base_64:
         image_file = base64.b64decode(url)
         with open(path_img, "wb") as image:
             image.write(image_file)
@@ -37,8 +43,8 @@ async def get_and_save_image(
             url=url,
             logging_data=logging_data,
             data_type="BYTES",
-            timeout=120,
-            function_name=get_and_save_image.__name__
+            timeout=180,
+            function_name=get_and_save_image.__name__,
         )
 
         if response.error:

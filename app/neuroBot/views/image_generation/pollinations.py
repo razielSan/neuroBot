@@ -20,9 +20,7 @@ from core.response import ResponseData
 from erros_handlers.decorator import safe_async_execution
 
 
-pollinations_img_gen_router: Router = Router(
-    name=img_gen_pollinations_settings.NAME_ROUTER
-)
+router: Router = Router(name=img_gen_pollinations_settings.NAME_ROUTER)
 
 
 class PollinationsImageGenerationFSM(StatesGroup):
@@ -32,7 +30,7 @@ class PollinationsImageGenerationFSM(StatesGroup):
     description: State = State()
 
 
-@pollinations_img_gen_router.callback_query(
+@router.callback_query(
     StateFilter(None),
     F.data == img_gen_pollinations_settings.CALLBACK_BUTTON_DATA,
 )
@@ -50,9 +48,7 @@ async def pollinations(call: CallbackQuery, state: FSMContext) -> None:
     await state.set_state(PollinationsImageGenerationFSM.description)
 
 
-@pollinations_img_gen_router.message(
-    PollinationsImageGenerationFSM.description, F.text == "Отмена"
-)
+@router.message(PollinationsImageGenerationFSM.description, F.text == "Отмена")
 async def cancel_pollinations_img_gen_handler(
     message: Message, state: FSMContext
 ) -> None:
@@ -68,7 +64,7 @@ async def cancel_pollinations_img_gen_handler(
     )
 
 
-@pollinations_img_gen_router.message(PollinationsImageGenerationFSM.spam, F.text)
+@router.message(PollinationsImageGenerationFSM.spam, F.text)
 async def get_messge_from_img_gen_pollinations(
     message: Message, state: FSMContext
 ) -> None:
@@ -79,7 +75,7 @@ async def get_messge_from_img_gen_pollinations(
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
-@pollinations_img_gen_router.message(
+@router.message(
     PollinationsImageGenerationFSM.description,
     F.text,
 )
@@ -95,7 +91,7 @@ async def add_img(message: Message, state: FSMContext, session: ClientSession) -
         text=messages.WAIT_MESSAGE,
         reply_markup=ReplyKeyboardRemove(),
     )
-    
+
     path_img = None
 
     # Встаем в spam для ответа пользователю при запросе

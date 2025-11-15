@@ -67,8 +67,8 @@ async def error_handler_for_the_website(
     timeout_cfg: aiohttp.ClientTimeout = aiohttp.ClientTimeout(total=timeout)
     try:
         async with session.request(
-            method,
-            url,
+            method=method,
+            url=url,
             timeout=timeout_cfg,
             data=data,
             headers=headers,
@@ -114,7 +114,7 @@ async def error_handler_for_the_website(
                 )
 
             elif resp.status != 200:
-
+                print(11111111111111111111)
                 error_body = await safe_read_response(resp=resp)
 
                 logg_error_str: str = str(error_body)[:500]

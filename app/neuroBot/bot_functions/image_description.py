@@ -1,9 +1,6 @@
-from typing import List, Optional
+from typing import List
 from pathlib import Path
 import aiohttp
-from logging import Logger
-from erros_handlers.format import format_message
-from settings.response import messages
 
 from erros_handlers.main import error_handler_for_the_website
 
