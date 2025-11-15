@@ -8,8 +8,10 @@ from settings.response import messages
 
 async def safe_async_execution(logging_data: Optional[LoggingData] = None):
     """
-        Декоратор оборчивающий асинхронную функцию в try/except для перхвата всех возможных ошибок
-        При ошибке в ходе выполнения функции выкидвает обьект класса ResponseData
+    Декоратор оборчивающий асинхронную функцию в try/except для перхвата всех возможных ошибок.
+
+    При ошибке в ходе выполнения функции выкидвает обьект класса ResponseData
+
     Args:
         logger_data (Optional[LoggingData], optional): Класс содержащий логгер и имя роутера.По умолчанию None
     """

@@ -7,16 +7,20 @@ from core.response import LoggingData, ResponseData
 
 
 async def get_and_save_image(
-    url: str,
+    data_requests: str,
     path_img: str,
     session: ClientSession,
     logging_data: LoggingData,
     base_64: Optional[bool] = None,
 ) -> ResponseData:
-    """_summary_
+    """
+    Сохраняет data_requests по указанному если base_64 = True.
+
+    Если data_requests это URL.Заходит по url, скачивает изображение
+    и сохраняет его по указанному пути
 
     Args:
-        url (str): url для скачивания или строка в кодировке base64
+        data_requests (str): url для скачивания или строка в кодировке base64
         path_img (str): Путь до картинки
         session (ClientSession): сессия для запроса
         logging_data (LoggingData): обьект класса LoggingData содержащий в себе логгер и имя роутера
@@ -33,14 +37,14 @@ async def get_and_save_image(
             - method (str): HTTP-метод, использованный при запросе.
     """
     if base_64:
-        image_file = base64.b64decode(url)
+        image_file = base64.b64decode(data_requests)
         with open(path_img, "wb") as image:
             image.write(image_file)
     else:
         # Делаем запрос на сайт для получения данных о картинке
         response: ResponseData = await error_handler_for_the_website(
             session=session,
-            url=url,
+            url=data_requests,
             logging_data=logging_data,
             data_type="BYTES",
             timeout=180,
@@ -56,7 +60,7 @@ async def get_and_save_image(
 
     return ResponseData(
         message=path_img,
-        url=url,
+        url="<unknown>",
         method="GET",
         status=200,
     )

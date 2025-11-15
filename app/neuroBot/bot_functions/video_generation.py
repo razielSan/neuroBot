@@ -29,9 +29,11 @@ def create_video_by_is_vheer(
     logging_data: LoggingData,
     description_url: Optional[str] = None,
 ) -> Dict:
+    """
+    Заходит на сайт https://vheer.com.
 
-    """Заходит на сайт https://vheer.com, через  selenium, загружает описание
-       изображений, жмет кнопку генерации видео и скачивае видео с сайта в папку
+    Через  selenium, загружает описание изображений, жмет кнопку генерации видео
+    и скачивае видео с сайта в папку.
 
     Args:
         url (str): URL сайта vheer для генерации изображения
@@ -54,7 +56,6 @@ def create_video_by_is_vheer(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-
     driver = None
     try:
         # 1 Обновляем прогресс при заходе в функцию
@@ -78,14 +79,12 @@ def create_video_by_is_vheer(
 
         # Если есть URL для сайта с описанием изображения заходим в него
         if description_url:
-            
+
             # Оборачиваем функцию в декоратор для отлова всех возможных ошибок
             decorator_function = safe_sync_execution(
                 logging_data=logging_data,
             )
-            func = decorator_function(
-                get_prompt_for_image_describepicture_сс
-            )
+            func = decorator_function(get_prompt_for_image_describepicture_сс)
 
             resonse_description: ResponseData = func(
                 driver=driver,
@@ -237,7 +236,10 @@ def get_prompt_for_image_by_produts_appose_ai(
     description_url: str,
     logging_data: LoggingData,
 ) -> ResponseData:
-    """Заходит на сайт "https://products.aspose.ai, загружает картинку, нажимает на кнопку сгенерировать
+    """
+    Заходит на сайт "https://products.aspose.ai.
+
+    Загружает картинку, нажимает на кнопку сгенерировать
     описание и возвращает описание изображения
 
     Args:
@@ -323,9 +325,10 @@ def get_prompt_for_image_describepicture_сс(
     description_url: str,
 ) -> ResponseData:
     """
-        Заходит на сайт "https://describepicture.cc/ru, загружает
-        картинку, нажимает на кнопку сгенерировать
-        описание и возвращает описание изображения
+    Заходит на сайт "https://describepicture.cc/ru.
+
+    Загружает  картинку, нажимает на кнопку сгенерировать описание и
+    возвращает описание изображения
 
     Args:
         driver (_type_): драйвер для селениума

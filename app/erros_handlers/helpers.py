@@ -15,13 +15,14 @@ async def run_safe_inf_executror(
     **kwargs,
 ) -> Union[Any, ResponseData]:
     """
-        Отлавливает все возможные ошибки для переданной синхронной функции.
-        При ошибке в ходе выполнения функции выкидвает обьект класса ResponseData
+    Отлавливает все возможные ошибки для переданной синхронной функции.
+
+    При ошибке в ходе выполнения функции выкидвает обьект класса ResponseData
 
     Args:
         loop (AbstractEventLoop): цикл событий
         func (Callable): функция для цикла
-        logging_data (Optional[LoggingData], optional): обьект класс 
+        logging_data (Optional[LoggingData], optional): обьект класс
         LoggingData содержащий логгер и имя роутера.None по умолчанию
 
     Returns:

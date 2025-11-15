@@ -78,15 +78,20 @@ async def cancel_handler_for_caila(message: Message, state: FSMContext) -> None:
 @router.message(CailaImageGeneration.spam, F.text)
 async def get_message_for_caila(message: Message) -> None:
     """
-    Работа с FSM CailaImageGeneration.Отправляет пользователю сообщение
-    при вводе текста во время обработке запроса.
+    Работа с FSM CailaImageGeneration.
+
+    Отправляет пользователю сообщение при вводе текста во время обработке запроса.
     """
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
 @router.callback_query(StateFilter(None), F.data.startswith("img_gen caila "))
 async def add_source_caila(call: CallbackQuery, state: FSMContext) -> None:
-    """Работа с FSM CailaImageGeneration.Просит пользователя ввести описание для изображения."""
+    """
+    Работа с FSM CailaImageGeneration.
+
+    Просит пользователя ввести описание для изображения.
+    """
     _, _, source = call.data.split(" ")
 
     await call.message.edit_reply_markup(reply_markup=None)
@@ -109,9 +114,10 @@ async def add_prompt(
     session: ClientSession,
 ) -> None:
     """
-    Работа с FSM CailaImageGeneration. Отправляет сгенерированную картинку пользователю.
-    """
+    Работа с FSM CailaImageGeneration.
 
+    Отправляет сгенерированную картинку пользователю.
+    """
     await bot.send_message(
         chat_id=message.chat.id,
         text=messages.WAIT_MESSAGE,

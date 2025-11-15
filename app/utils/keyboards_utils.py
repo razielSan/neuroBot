@@ -12,7 +12,7 @@ def get_total_buttons_inline_kb(
     quantity_button: int = 1,
     resize_keyboard: bool = True,
 ) -> InlineKeyboardMarkup:
-    """Общая inline клавиатура с генерацими кнопок
+    """Общая inline клавиатура с генерацими кнопок.
 
     Args:
         list_inline_kb_data (List[InlineKeyboardData]): список из InlineKeyboardData с данными о кнопке
@@ -22,7 +22,6 @@ def get_total_buttons_inline_kb(
     Returns:
         InlineKeyboardMarkup: Возвращает инлайн клавиатуру
     """
-
     inline_kb: InlineKeyboardBuilder = InlineKeyboardBuilder()
 
     for button in list_inline_kb_data:
@@ -41,7 +40,7 @@ def get_total_buttons_reply_kb(
     quantity_button: int,
     resize_keyboard=True,
 ) -> ReplyKeyboardMarkup:
-    """Общая reply клавиатура с генерацими кнопок
+    """Общая reply клавиатура с генерацими кнопок.
 
     Args:
         list_text (List[str]): Список из строк с названиями кнопок
@@ -51,7 +50,6 @@ def get_total_buttons_reply_kb(
     Returns:
         ReplyKeyboardMarkup: Возвращает reply клавиатуру
     """
-
     reply_kb: ReplyKeyboardBuilder = ReplyKeyboardBuilder()
 
     for text_button in list_text:

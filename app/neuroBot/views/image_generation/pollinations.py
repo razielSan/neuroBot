@@ -36,8 +36,9 @@ class PollinationsImageGenerationFSM(StatesGroup):
 )
 async def pollinations(call: CallbackQuery, state: FSMContext) -> None:
     """
-    Работа с FSM PollinationsImageGenerationFSM.Просит пользователя ввести описание
-    для изображения.
+    Работа с FSM PollinationsImageGenerationFSM.
+
+    Просит пользователя ввести описание ля изображения.
     """
     await call.message.edit_reply_markup(reply_markup=None)
 
@@ -52,7 +53,11 @@ async def pollinations(call: CallbackQuery, state: FSMContext) -> None:
 async def cancel_pollinations_img_gen_handler(
     message: Message, state: FSMContext
 ) -> None:
-    """Работа с FSM ImaggaImgDescFSM.Отменяет все действияю"""
+    """
+    Работа с FSM ImaggaImgDescFSM.
+
+    Отменяет все действияю
+    """
     await state.clear()
     await message.answer(
         text=messages.CANCEL_MESSAGE,
@@ -69,8 +74,9 @@ async def get_messge_from_img_gen_pollinations(
     message: Message, state: FSMContext
 ) -> None:
     """
-    Работа с FSM PollinationsImageGenerationFSM. Отправлюяют пользователю
-    сообщение при обработке запроса
+    Работа с FSM PollinationsImageGenerationFSM.
+
+    Отправлюяют пользователю сообщение при обработке запроса
     """
     await message.reply(text=messages.WAIT_MESSAGE)
 
@@ -81,10 +87,10 @@ async def get_messge_from_img_gen_pollinations(
 )
 async def add_img(message: Message, state: FSMContext, session: ClientSession) -> None:
     """
-    Работа с FSM PollinationsImageGenerationFSM.Отправляет пользователю
-    сгенерированное изображение.
-    """
+    Работа с FSM PollinationsImageGenerationFSM.
 
+    Отправляет пользователю сгенерированное изображение.
+    """
     await state.set_state(PollinationsImageGenerationFSM.spam)
 
     await message.answer(
@@ -116,7 +122,7 @@ async def add_img(message: Message, state: FSMContext, session: ClientSession) -
 
     # Делаем заропс на получение картинки по описантю
     response_img: ResponseData = await func(
-        url=url,
+        data_requests=url,
         session=session,
         path_img=path_img,
         logging_data=neurobot_image_generation_logger,

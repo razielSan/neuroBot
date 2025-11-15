@@ -9,7 +9,8 @@ def format_message(
     error_text: Optional[str] = None,
     function_name: Optional[str] = None,
 ) -> str:
-    """Возвращает строку для записи в лог ошибок
+    """
+    Возвращает строку для записи в лог ошибок.
 
     Args:
         name_router (str): имя роутера
@@ -22,7 +23,6 @@ def format_message(
     Returns:
         str: Возвращает строку для записи в лог ошибок
     """
-
     name_router: str = name_router or "<unknown>"
     method: str = method or "<no method>"
     status: int = status or 0

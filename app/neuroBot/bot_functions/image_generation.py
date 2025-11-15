@@ -16,9 +16,10 @@ async def get_url_video_generate_by_caila(
     quality_gpt_image_1: str = "low",
     quality_dall_e_3: str = "standard",
 ) -> ResponseData:
-    """Возвращает b64_json или url для скачивания изображения
+    """
+    Работа с сайтом https://caila.io/.
 
-    Работа с сайтом https://caila.io/
+    Возвращает b64_json или url для скачивания изображения.
 
     Args:
         url (str): URL генерации изображения
@@ -41,7 +42,6 @@ async def get_url_video_generate_by_caila(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-
     quality: str = "low"
     if model == "gpt-image-1":
         quality = quality_gpt_image_1
@@ -72,7 +72,7 @@ async def get_url_video_generate_by_caila(
     )
     if response_img.error:
         return response_img
-    
+
     if model == "dall-e-3":
         message = response_img.message["data"][0]["url"]
     elif model == "gpt-image-1":
@@ -84,4 +84,3 @@ async def get_url_video_generate_by_caila(
         status=200,
         message=message,
     )
-

@@ -36,7 +36,7 @@ router: Router = Router(name=video_gen_vheer_settings.NAME_ROUTER)
 
 
 class VheerVideoGenerationFSM(StatesGroup):
-    """FSM для работы с генерацией видео для сайта https://vheer.com/"""
+    """FSM для работы с генерацией видео для сайта https://vheer.com/."""
 
     counter_progress: State = State()  # Счетчик прогресса скачивания видео
     cancel: State = State()  # Отмена скачивания видео
@@ -51,7 +51,6 @@ class VheerVideoGenerationFSM(StatesGroup):
 )
 async def vheer(call: CallbackQuery, state: FSMContext) -> None:
     """Отправляет пользователю инлайн клавиатуру с доступными вариантам генерации видео."""
-
     await call.message.edit_reply_markup(reply_markup=None)
     await call.message.answer(
         text=messages.OPTIONS_BOT_MESSAGE,
@@ -74,7 +73,11 @@ async def vheer(call: CallbackQuery, state: FSMContext) -> None:
 async def cancel__vheer_video_generation_handler(
     message: Message, state: FSMContext
 ) -> None:
-    """Работа с FSM VheerVideoGenerationFSM. Отменяет все действия."""
+    """
+    Работа с FSM VheerVideoGenerationFSM.
+
+    Отменяет все действия.
+    """
     await state.clear()
     await message.answer(text=messages.CANCEL_MESSAGE)
     await bot.send_message(
@@ -89,10 +92,10 @@ async def get_message_for_vheer_video_generation(
     message: Message, state: FSMContext
 ) -> None:
     """
-    Работа с FSM VheerVideoGenerationFSM.Отправляет пользователю сообщение при
-    когда идет обработка запроса
-    """
+    Работа с FSM VheerVideoGenerationFSM.
 
+    Отправляет пользователю сообщение при когда идет обработка запроса
+    """
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
@@ -101,8 +104,9 @@ async def get_message_for_vheer_video_generation(
 )
 async def start_vheer_video_generation(call: CallbackQuery, state: FSMContext) -> None:
     """
-    Работа с FSM VheerVideoGenerationFSM. Отлавливает какой тип генерации выбрал пользователь
-    с соответсвующими действиями
+    Работа с FSM VheerVideoGenerationFSM.
+
+    Отлавливает какой тип генерации выбрал пользователь с соответсвующими действиями
     """
     _, vheer_data = call.data.split(" ")
 
@@ -126,8 +130,11 @@ async def start_vheer_video_generation(call: CallbackQuery, state: FSMContext) -
 
 @router.message(VheerVideoGenerationFSM.description, F.text)
 async def add_description_for_vheer(message: Message, state: FSMContext) -> None:
-    """Работа с FSM VheerVideoGenerationFSM.Просит пользователя скинуть изображение"""
+    """
+    Работа с FSM VheerVideoGenerationFSM.
 
+    Просит пользователя скинуть изображение
+    """
     data_vheer: Dict = await state.get_data()
 
     # Если пользователь выбрал генерацию по описанию и изображению
@@ -144,10 +151,10 @@ async def add_description_for_vheer(message: Message, state: FSMContext) -> None
 @router.message(VheerVideoGenerationFSM.image, F)
 async def add_photo_for_vheer(message: Message, state: FSMContext):
     """
-    Работа с FSM VheerVideoGenerationFSM.Отправляем пользоваетелю сгенерированное видео.
+    Работа с FSM VheerVideoGenerationFSM.
 
+    Отправляем пользоваетелю сгенерированное видео.
     """
-
     if message.content_type == ContentType.PHOTO:
         # Создаем переменные для путей чтобы в конце если они есть удалить видео и изображение
         video_path = None

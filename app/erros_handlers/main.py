@@ -9,7 +9,7 @@ from settings.response import messages
 
 
 async def safe_read_response(resp):
-    """Проверяет в каком формате был передан ответ с сайта и возвращает текст ответа
+    """Проверяет в каком формате был передан ответ с сайта и возвращает текст ответа.
 
     Args:
         resp (_type_): запрос для сайта
@@ -39,8 +39,7 @@ async def error_handler_for_the_website(
     function_name=None,
 ) -> ResponseData:
     """
-
-    Асинхронный запрос с обработками ошибок для сайтов
+    Асинхронный запрос с обработками ошибок для сайтов.
 
     Args:
         session (_type_): асинхронная сессия запроса
@@ -63,7 +62,6 @@ async def error_handler_for_the_website(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-
     timeout_cfg: aiohttp.ClientTimeout = aiohttp.ClientTimeout(total=timeout)
     try:
         async with session.request(

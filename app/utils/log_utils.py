@@ -24,7 +24,9 @@ def setup_bot_logging(
     root_path: Optional[Path] = False,
 ) -> Tuple[Logger, Logger, Logger]:
     """
-    Создаем логгеры для бота: Обычный, предупреждающий и для ошибок
+    Создаем логгеры для бота.
+
+    Обычный, предупреждающий и для ошибок
     Логи будут лежать в logs/<bot_name>/<тип логгирования>.log
 
     Args:
@@ -166,8 +168,8 @@ def get_loggers(
     logging_data: LoggerStorage,
 ) -> LoggingData:
     """
+    Возвращает хранилище для логов конкретного роутера.
 
-    Возвращает хранилище для логов конкретного роутера
     Если нет возвращает ошибку KeyError
 
     Args:

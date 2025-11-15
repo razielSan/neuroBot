@@ -8,7 +8,7 @@ def ensure_derictories(
     info_logger: Optional[Logger] = None,
 ) -> None:
     """
-    Проверяет наличие переданных путей и создает их при необходимости
+    Проверяет наличие переданных путей и создает их при необходимости.
 
     Args:
         info_logger (Optional[Logger], optional): Логгер для записи в лог. Defaults to None.
@@ -25,7 +25,7 @@ def delete_data(
     list_path: List[Path],
     warning_logger: Optional[Logger] = None,
 ) -> None:
-    """Удаляет данные по переданному пути
+    """Удаляет данные по переданному пути.
 
     Args:
         path (Path): Список с путями до данных

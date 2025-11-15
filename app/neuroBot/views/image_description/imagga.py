@@ -71,6 +71,7 @@ async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) ->
 async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) -> None:
     """
     Работа с FSM ImaggaImgDescFSM.
+
     Отправляет пользователю сообщение если был введен текс при обработке запроса.
     """
 
@@ -85,9 +86,9 @@ async def add_prompt_for_imagga(
 ) -> None:
     """
     Работса с FSM ImaggaImgDescFSM.
+
     Отправляет пользователю анализ изображения.
     """
-
     if message.content_type == ContentType.PHOTO:
         path_img = None
 
