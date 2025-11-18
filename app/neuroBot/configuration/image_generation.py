@@ -32,6 +32,8 @@ class CailaIoImageGeneration(BaseSettings):
     CALLBACK_BUTTON_TEXT: str = "2⃣ Caila"
     CALLBACK_BUTTON_DATA: str = "img_gen Caila"
     APIKEY_CAILA_IG: Optional[str] = None
+
+    # URL для запроса
     URL_IMAGE_GENERATE: str = "https://caila.io/api/adapters/openai/images/generations"
 
     # Модели для генерации
@@ -46,6 +48,36 @@ class CailaIoImageGeneration(BaseSettings):
     BOT_DIR: Path = Path(__file__).resolve().parent.parent
     PATH_TO_CAILA_IMAGES_GENERATION: Path = (
         BOT_DIR / "temp" / "img" / "images_generation" / "caila"
+    )
+
+    model_config: SettingsConfigDict = SettingsConfigDict(
+        env_file=BOT_DIR / ".env",
+        extra="ignore",
+    )
+
+
+class StablehordeImageGeneration(BaseSettings):
+    """Модель сайта https://stablehorde.net."""
+    
+    # Основыне параметры
+    NAME_ROUTER: str = "Stablehorde"
+    CALLBACK_BUTTON_TEXT: str = "3⃣ Stablehorde"
+    CALLBACK_BUTTON_DATA: str = "img_gen Stablehorde"
+    APIKEY_STABLEHORDE_IG: Optional[str] = None
+
+    # URL для запроса
+    REQUESTS_TO_GENERATE_IMAGES: str = "https://stablehorde.net/api/v2/generate/async"  # запроса на генерации изображений
+    REQUESTS_STATUS_CHECK_WITHOUT_IMAGES: str = (
+        "https://stablehorde.net/api/v2/generate/check/{id}"
+    )
+    REQUESTS_FULL_STATUS_IMAGE_GENERATIONS: str = (
+        "https://stablehorde.net/api/v2/generate/status/{id}"
+    )
+
+    # Пути для модели определяются с пути этого файла
+    BOT_DIR: Path = Path(__file__).resolve().parent.parent
+    PATH_TO_STABLEHORDE_IMAGES_GENERATION: Path = (
+        BOT_DIR / "temp" / "img" / "images_generation" / "stablehorde"
     )
 
     model_config: SettingsConfigDict = SettingsConfigDict(
