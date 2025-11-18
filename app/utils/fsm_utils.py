@@ -5,24 +5,27 @@ from aiogram.fsm.context import FSMContext
 
 
 def make_update_progress(loop, state: FSMContext) -> Callable:
-    """Возвращает функцию для отслеживания прогресса скачивания.
+    """
+    Возвращает функцию для отслеживания прогресса скачивания.
 
     Args:
         loop (_type_): цикл событий
         state (FSMContext): состояние В FSM для обновление прогресса
     """
 
-    def update_progress(gen_description: bool = None) -> True:
+    def update_progress(
+        data_state: bool = None,
+    ) -> True:
         data: Dict = asyncio.run_coroutine_threadsafe(state.get_data(), loop).result()
-
         asyncio.run_coroutine_threadsafe(
             state.update_data(counter_progress=data.get("counter_progress", 0) + 1),
             loop,
         ).result()
+
         # Дополнительная опция для необходимого состояния
-        if gen_description:
+        if data_state:
             asyncio.run_coroutine_threadsafe(
-                state.update_data(gen_description=gen_description),
+                state.update_data(data_state=data_state),
                 loop,
             ).result()
 
@@ -31,35 +34,26 @@ def make_update_progress(loop, state: FSMContext) -> Callable:
     return update_progress
 
 
-def make_cancel_chek(loop, state: FSMContext):
-    """Возвращает функцию для отмены скачивания.
+def async_make_update_progress(state: FSMContext):
+    """
+    Возвращает функцию для отслеживания асинхронного прогресса скачивания.
 
     Args:
         loop (_type_): цикл событий
         state (FSMContext): состояние В FSM для обновление прогресса
     """
 
-    def cancell_chek():
-        data: Dict = asyncio.run_coroutine_threadsafe(state.get_data(), loop).result()
-        return data.get("cancel", None)
+    async def update_progress(data_state: int = None):
+        data: Dict = await state.get_data()
 
-    return cancell_chek
+        if data.get("cancel"):
+            return False
 
+        await state.update_data(counter_progress=data.get("counter_progress", 0) + 1)
 
-def chek_cancel(
-    cancel_chek: Callable,
-    selenium_driver=None,
-) -> Optional[List]:
-    """Функция для проверки состояния отмены.
+        if data_state is not None:
+            await state.update_data(data_state=data_state)
 
-    Args:
-        selenium_driver (_type_): веб драйвер для selenium
-        cancel_chek (_type_): функция для проверки отмена скачивания
+        return True
 
-    Returns:
-        _type_: Возвращает либо пустой список либо None
-    """
-    if cancel_chek():
-        if selenium_driver:
-            selenium_driver.quit()
-        return []
+    return update_progress

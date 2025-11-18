@@ -109,7 +109,7 @@ async def add_prompt_for_imagga(
         await bot.download(file=message.photo[-1].file_id, destination=path_img)
 
         # Оборачиваем функцию в декоратор для отлавливания всех возможных ошибок
-        decorator_function = await safe_async_execution(
+        decorator_function = safe_async_execution(
             logging_data=neurobot_image_description_logger,
         )
         func = decorator_function(get_image_description_by_immaga)

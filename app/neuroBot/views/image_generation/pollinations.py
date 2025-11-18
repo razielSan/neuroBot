@@ -38,7 +38,7 @@ async def pollinations(call: CallbackQuery, state: FSMContext) -> None:
     """
     Работа с FSM PollinationsImageGenerationFSM.
 
-    Просит пользователя ввести описание ля изображения.
+    Просит пользователя ввести описание для изображения.
     """
     await call.message.edit_reply_markup(reply_markup=None)
 
@@ -115,7 +115,7 @@ async def add_img(message: Message, state: FSMContext, session: ClientSession) -
     )
 
     # Оборочиваем get_and_save_image в декоратор для перехвата всех возможных ошибок
-    decorator_function = await safe_async_execution(
+    decorator_function = safe_async_execution(
         logging_data=neurobot_image_generation_logger
     )
     func = decorator_function(get_and_save_image)

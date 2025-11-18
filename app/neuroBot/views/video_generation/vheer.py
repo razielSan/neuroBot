@@ -42,7 +42,7 @@ class VheerVideoGenerationFSM(StatesGroup):
     cancel: State = State()  # Отмена скачивания видео
     image: State = State()
     description: State = State()
-    gen_description: State = State()  # Для определния готовности описания изображения
+    data_state: State = State()  # Для определния готовности описания изображения
 
 
 @router.callback_query(
@@ -162,7 +162,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
         await bot.send_message(
             chat_id=message.chat.id,
-            text=messages.WAIT_MESSAGE,
+            text=messages.WAIT_GENERATION_MESSAGE.format(start=30, end=5),
             reply_markup=ReplyKeyboardRemove(),
         )
         vheer_data: Dict = await state.get_data()
@@ -263,7 +263,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
             # Если идет создание видео по изображению
             if description_image:
-                gen_description = data.get("gen_description", None)
+                gen_description = data.get("data_state", None)
                 # Сообщение на случай если сайт по генерации описания выдал ошибку
                 default_description: str = (
                     (
@@ -316,7 +316,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
                 await asyncio.sleep(1)
         try:
             # Для безопасного ожидания ответа
-            msg: ResponseData = await asyncio.wrap_future(progress_task)
+            msg: ResponseData = await progress_task
         except Exception as e:
             neurobot_video_generation_logger.error_logger.exception(
                 format_message(

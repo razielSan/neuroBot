@@ -1,12 +1,14 @@
 from typing import Optional, Callable
 import functools
+import asyncio
+from asyncio import exceptions
 
 from erros_handlers.format import format_message
 from core.response import LoggingData, ResponseData
 from settings.response import messages
 
 
-async def safe_async_execution(logging_data: Optional[LoggingData] = None):
+def safe_async_execution(logging_data: Optional[LoggingData] = None):
     """
     Декоратор оборчивающий асинхронную функцию в try/except для перхвата всех возможных ошибок.
 
@@ -21,6 +23,16 @@ async def safe_async_execution(logging_data: Optional[LoggingData] = None):
         async def wrapper(*args, **kwargs):
             try:
                 return await function(*args, **kwargs)
+
+            except exceptions.CancelledError:
+                print("Остановка работы процесса пользователем")
+                return ResponseData(
+                    message="Остановка работы процесса пользователем",
+                    status=0,
+                    method="<unknown>",
+                    url="<unknown>",
+                )
+
             except Exception as err:
                 if logging_data:
                     logging_data.error_logger.exception(

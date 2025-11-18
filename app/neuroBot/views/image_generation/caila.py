@@ -136,7 +136,7 @@ async def add_prompt(
     )
 
     # Оборачиваем функцию в декоратор для отлова всех возможных ошибок
-    decorator_function = await safe_async_execution(
+    decorator_function = safe_async_execution(
         logging_data=neurobot_image_generation_logger,
     )
     func = decorator_function(get_url_video_generate_by_caila)
@@ -159,7 +159,7 @@ async def add_prompt(
             else False
         )
         # Оборачиваем функцию в декоратор для отлова всех возможных ошибок
-        decorator_function = await safe_async_execution(
+        decorator_function = safe_async_execution(
             logging_data=neurobot_image_generation_logger,
         )
         func = decorator_function(get_and_save_image)

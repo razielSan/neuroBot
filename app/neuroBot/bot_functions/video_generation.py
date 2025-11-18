@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
 from selenium import webdriver
+from selenium.common import exceptions
 
 from neuroBot.utils.selenium import create_selenium_driver
 from neuroBot.extensions import chrome_selenium_settings
@@ -97,9 +98,9 @@ def create_video_by_is_vheer(
                 resonse_description.message = choice(
                     video_gen_vheer_settings.DEFAULT_LIST_DESCRIPTION_IMAGES,
                 )
-                update_progress(gen_description="default_description")
+                update_progress(data_state="default_description")
             else:
-                update_progress(gen_description=True)
+                update_progress(data_state=True)
 
             prompt: str = resonse_description.message
 
@@ -221,7 +222,22 @@ def create_video_by_is_vheer(
             method="GET",
             status=200,
         )
-
+    except exceptions.TimeoutException as err:
+        logging_data.error_logger.exception(
+            msg=format_message(
+                name_router=logging_data.router_name,
+                method="GET",
+                status=0,
+                url=description_url,
+                error_text=err,
+            )
+        )
+        return ResponseData(
+            error=messages.TIMEOUT_ERROR,
+            url=description_url,
+            method="GET",
+            status=0,
+        )
     finally:
         if driver:
             try:
@@ -277,7 +293,7 @@ def get_prompt_for_image_by_produts_appose_ai(
         Select(driver.find_element(By.ID, "description-lang")).select_by_value("en")
         time.sleep(2)
 
-        # Кликаес на кнопку
+        # Кликаем на кнопку
         generate_button: WebElement = wait.until(
             EC.presence_of_element_located((By.ID, "uploadButton"))
         )

@@ -37,6 +37,7 @@ async def error_handler_for_the_website(
     data=None,
     headers=None,
     function_name=None,
+    json=None,
 ) -> ResponseData:
     """
     Асинхронный запрос с обработками ошибок для сайтов.
@@ -70,6 +71,7 @@ async def error_handler_for_the_website(
             timeout=timeout_cfg,
             data=data,
             headers=headers,
+            json=json,
             allow_redirects=True,
         ) as resp:
             # Для удобного логгирования
@@ -111,8 +113,7 @@ async def error_handler_for_the_website(
                     method=resp.method,
                 )
 
-            elif resp.status != 200:
-                print(11111111111111111111)
+            elif resp.status != 200 and resp.status != 202:
                 error_body = await safe_read_response(resp=resp)
 
                 logg_error_str: str = str(error_body)[:500]
