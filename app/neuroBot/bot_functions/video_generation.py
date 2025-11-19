@@ -139,7 +139,7 @@ def create_video_by_is_vheer(
         )
         abs_path: str = os.path.abspath(image_path)
         file_input.send_keys(abs_path)
-        time.sleep(10)
+        time.sleep(10)  # даем время прогрузится картинке
 
         # 5 Обновляем прогресс(после загрузки фото на сайт загрузки сайта) для вывода пользователю
         update_progress()
@@ -173,7 +173,6 @@ def create_video_by_is_vheer(
         # Скроллим и кликаем через JS (надёжнее на Tailwind/React)
         driver.execute_script("arguments[0].scrollIntoView(true);", button_generate)
         driver.execute_script("arguments[0].click();", button_generate)
-        time.sleep(2)
 
         # 6 Обновляем прогресс(после того когда кликнули кнопку сгенерировать видео) для вывода пользователю
         update_progress()
@@ -246,95 +245,6 @@ def create_video_by_is_vheer(
                 pass
 
 
-def get_prompt_for_image_by_produts_appose_ai(
-    driver: webdriver.Chrome,
-    image_path: str,
-    description_url: str,
-    logging_data: LoggingData,
-) -> ResponseData:
-    """
-    Заходит на сайт "https://products.aspose.ai.
-
-    Загружает картинку, нажимает на кнопку сгенерировать
-    описание и возвращает описание изображения
-
-    Args:
-        driver (_type_): драйвер для селениума
-        image_path (str): путь до картинки для описания
-        description_url (str): URL сайта для описания изображения
-        logging_data (Logger): класс содержащий в себе логгер и имя роутера для записи в лог
-
-    Returns:
-        ResponseData: Объект с результатом запроса.
-
-        Атрибуты ResponseData:
-            - message (Any | None): Данные успешного ответа (если запрос прошёл успешно).
-            - error (str | None): Описание ошибки, если запрос завершился неудачей.
-            - status (int): HTTP-код ответа. 0 — если ошибка возникла на клиентской стороне.
-            - url (str): URL, по которому выполнялся запрос.
-            - method (str): HTTP-метод, использованный при запросе.
-    """
-    try:
-        # Переходим по ссылке
-        driver.get(description_url)
-
-        wait: WebDriverWait = WebDriverWait(driver, 60)
-
-        # Загружаем картинку на сайт
-        image_input: WebElement = wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
-        )
-        path: str = os.path.abspath(image_path)
-        image_input.send_keys(path)
-        time.sleep(2)
-
-        # Выбираем английский язык для описания
-        wait.until(EC.visibility_of_element_located((By.ID, "description-lang")))
-        Select(driver.find_element(By.ID, "description-lang")).select_by_value("en")
-        time.sleep(2)
-
-        # Кликаем на кнопку
-        generate_button: WebElement = wait.until(
-            EC.presence_of_element_located((By.ID, "uploadButton"))
-        )
-        generate_button.click()
-
-        # Ждем описания изображения
-        text_area: WebElement = wait.until(
-            EC.presence_of_element_located(
-                (
-                    By.CSS_SELECTOR,
-                    "textarea[class='text-area']",
-                )
-            )
-        )
-
-        text: str = text_area.text.translate(str.maketrans("", "", "*-"))
-
-        return ResponseData(
-            message=text,
-            url=description_url,
-            method="GET",
-            status=200,
-        )
-    except Exception as err:
-        logging_data.error_logger.exception(
-            msg=format_message(
-                name_router=logging_data.router_name,
-                method="<unknown>",
-                status=0,
-                url=description_url,
-                error_text=err,
-            )
-        )
-        return ResponseData(
-            error=messages.NETWORK_ERROR,
-            url=description_url,
-            status=0,
-            method="<unknown>",
-        )
-
-
 def get_prompt_for_image_describepicture_сс(
     driver: webdriver.Chrome,
     image_path: str,
@@ -383,11 +293,20 @@ def get_prompt_for_image_describepicture_сс(
     )
     generate_button.click()
 
-    # Ждем 10 секунд чтобы генерация завершилась
-    time.sleep(10)
+    # кнопка должна появится когда текст будет готов
+    WebDriverWait(driver, 120).until(
+        EC.presence_of_element_located(
+            (
+                By.CSS_SELECTOR,
+                "svg[stroke='currentColor']",
+            )
+        )
+    )
+    # Ждем время для появления текста
+    time.sleep(6)
 
-    # Достаем текст описания изображения
-    text_area: WebElement = wait.until(
+    # Достаем текст из описания изображения
+    text_area: WebElement = WebDriverWait(driver, 120).until(
         EC.presence_of_element_located(
             (
                 By.CSS_SELECTOR,
