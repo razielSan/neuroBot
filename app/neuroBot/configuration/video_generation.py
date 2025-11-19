@@ -10,7 +10,7 @@ class VheerVideoGeneration(BaseModel):
     TOTAL_STEP: int = (
         10  # Общее количество шагов для отслеживания прогресс загрузки видео
     )
-    NAME_ROUTER: str = "vheer"
+    NAME_ROUTER: str = "VideoGen Vheer"
     CALLBACK_BUTTON_NAME: str = "1⃣ vheer"  # callback запись в инлайн клавиатуре
     CALLBACK_BUTTON_DATA: str = "video_gen vheer"
     VIDEO_URL: str = "https://vheer.com/app/image-to-video"

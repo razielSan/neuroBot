@@ -8,11 +8,13 @@ from neuroBot.views.image_generation.caila import router as caila_img_gen_router
 from neuroBot.views.image_generation.stablehorde import (
     router as stablehorde_img_gen_router,
 )
+from neuroBot.views.image_generation.vheer import router as vheer_img_gen_router
 
 
 image_generation_router.include_router(pollinations_img_gen_router)
 image_generation_router.include_router(caila_img_gen_router)
 image_generation_router.include_router(stablehorde_img_gen_router)
+image_generation_router.include_router(vheer_img_gen_router)
 
 
 image_generation_router.message.middleware(

@@ -12,6 +12,7 @@ from neuroBot.configuration.image_generation import (
     PollinationsImageGeneration,
     CailaIoImageGeneration,
     StablehordeImageGeneration,
+    VheerImageGeneration,
 )
 from settings.response import settings
 from core.config import InlineKeyboardData
@@ -30,6 +31,7 @@ img_gen_pollinations_settings: PollinationsImageGeneration = (
 )
 img_gen_caila_io_settings: CailaIoImageGeneration = CailaIoImageGeneration()
 img_gen_stablehorde_settings: StablehordeImageGeneration = StablehordeImageGeneration()
+img_gen_vheer_settings: VheerImageGeneration = VheerImageGeneration()
 
 # Создаем бота
 bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
@@ -85,9 +87,13 @@ get_start_button_inline_menu_for_image_generation = get_total_buttons_inline_kb(
         InlineKeyboardData(
             text=img_gen_stablehorde_settings.CALLBACK_BUTTON_TEXT,
             callback_data=img_gen_stablehorde_settings.CALLBACK_BUTTON_DATA,
+        ),
+        InlineKeyboardData(
+            text=img_gen_vheer_settings.CALLBACK_BUTTON_TEXT,
+            callback_data=img_gen_vheer_settings.CALLBACK_BUTTON_DATA,
         )
     ],
-    quantity_button=1,
+    quantity_button=2,
 )
 
 # Инициализируем логгеры

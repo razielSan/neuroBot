@@ -10,6 +10,7 @@ class DefaultMessages(BaseModel):
     IMAGE_DESCRIPTION_MESSAGE: str = "📝 Введите описание для изображения"
     TRY_REPSONSE_MESSAGE: str = "👣 Попробуйте, снова, сделать запрос..."
     WAIT_MESSAGE: str = "⏳ Идет обработка запроса..."
+    COMPLETE_GENERATION_MESSAGE: str =  "⏳ Генерация завершена. Ожидайте..."
     WAIT_GENERATION_MESSAGE: str = (
         "⏳ Обработка может занять"
         " от {start} секунд до {end} минут. Пожалуйста, наберитесь терпения"

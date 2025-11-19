@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class ImaggaImageDescription(BaseSettings):
     """Модель сайта, по описаню изображений, https://imagga.com/."""
 
-    NAME_ROUTER: str = "Imagga"
+    NAME_ROUTER: str = "ImgDesc Imagga"
     CALLBACK_BUTTON_TEXT: str = "1⃣ Imagga"
     CALLBACK_BUTTON_DATA: str = "img_desc Imagga"
     ID_IMAGGA_AUTHORIZATION: Optional[str]  # Токен аторизации

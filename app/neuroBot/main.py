@@ -9,6 +9,7 @@ from neuroBot.extensions import (
     img_gen_pollinations_settings,
     img_gen_caila_io_settings,
     img_gen_stablehorde_settings,
+    img_gen_vheer_settings,
     neurobot_main_logger,
 )
 
@@ -30,6 +31,7 @@ ensure_derictories(
     img_gen_pollinations_settings.PATH_TO_POLLINATIONS_IMAGES_GENERATION,
     img_gen_caila_io_settings.PATH_TO_CAILA_IMAGES_GENERATION,
     img_gen_stablehorde_settings.PATH_TO_STABLEHORDE_IMAGES_GENERATION,
+    img_gen_vheer_settings.PATH_TO_VHEER_IMAGES_GENERATION,
     # info_logger=neurobot_main_logger.info_logger,
 )
 

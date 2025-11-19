@@ -1,7 +1,6 @@
 from typing import List
 from core.response import ResponseData
 from settings.response import messages
-from logging import Logger
 
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -12,14 +11,13 @@ from core.response import LoggingData
 
 
 def create_selenium_driver(
-    # name_router: str,
     driver_path: str,
     add_arument: List[str],
     logging_data: LoggingData,
     automatisation: bool = True,
     browser: str = "chrome",
 ) -> ResponseData:
-    """Создаем driver для selenium
+    """Создаем driver для selenium.
 
     Args:
         driver_path (str): Путь до папки с драйвером
@@ -40,7 +38,6 @@ def create_selenium_driver(
             - url (str): URL, по которому выполнялся запрос.
             - method (str): HTTP-метод, использованный при запросе.
     """
-
     try:
         if browser == "chrome":
             service: Service = Service(executable_path=driver_path)

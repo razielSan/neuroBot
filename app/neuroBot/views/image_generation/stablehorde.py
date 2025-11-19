@@ -324,18 +324,21 @@ async def add_prompt(
                         await bot.send_message(
                             chat_id=message.chat.id,
                             text=f"{data.error}\n{messages.TRY_REPSONSE_MESSAGE}",
+                            reply_markup=get_reply_cancel_button(),
                         )
                 else:
                     await state.set_state(StablehordeImgGenFSM.prompt)
                     await bot.send_message(
                         chat_id=message.chat.id,
                         text=f"{img_content.error}\n{messages.TRY_REPSONSE_MESSAGE}",
+                        reply_markup=get_reply_cancel_button(),
                     )
             else:
                 await state.set_state(StablehordeImgGenFSM.prompt)
                 await bot.send_message(
                     chat_id=message.chat.id,
                     text=f"{img_status.error}\n{messages.TRY_REPSONSE_MESSAGE}",
+                    reply_markup=get_reply_cancel_button(),
                 )
 
     else:
@@ -343,6 +346,7 @@ async def add_prompt(
         await bot.send_message(
             chat_id=message.chat.id,
             text=f"{img_id.error}\n{messages.TRY_REPSONSE_MESSAGE}",
+            reply_markup=get_reply_cancel_button(),
         )
 
     # Удаляем изображение
