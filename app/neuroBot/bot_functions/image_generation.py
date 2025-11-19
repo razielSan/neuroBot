@@ -2,12 +2,18 @@ import json
 from typing import Dict, Optional, Callable
 import asyncio
 from time import time
+from pathlib import Path
 
 from aiohttp import ClientSession
-from aiogram.fsm.context import FSMContext
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from erros_handlers.main import error_handler_for_the_website
 from core.response import LoggingData, ResponseData
+from utils.network import save_blob_image
+from core.response import ResponseData
+from erros_handlers.format import format_message
 
 
 async def get_url_video_generate_by_caila(
@@ -276,3 +282,105 @@ async def check_status_without_images_by_stablehorde(
         respons_status.message = None
         respons_status.error = "Время ожидания истекло"
     return respons_status
+
+
+def get_an_image_id_by_vheere(
+    driver,
+    url: str,
+    prompt: str,
+    image_path: Path,
+    logging_data: LoggingData,
+    timeout: int = 300,
+) -> ResponseData:
+    """
+    Работа с сайтом https://vheer.com/.
+
+    Генерирует изображение по промпту и скачивает его на указанный путь
+
+    Args:
+        driver (_type_): драйвер для селениума
+        url (_type_): url для генерации
+        prompt (_type_): описания изображения
+        image_path (_type_): путь до изображения
+        logging_data (LoggingData): Обьект класса LoggingData содержащий логгер и имя роутера
+        timeout (int, optional): Время в секундах ожидания видео.По умолчанию 300 секунд
+
+    Returns:
+        ResponseData: Объект с результатом запроса.
+
+        Атрибуты ResponseData:
+            - message (Any | None): Данные успешного ответа (если запрос прошёл успешно).
+            - error (str | None): Описание ошибки, если запрос завершился неудачей.
+            - status (int): HTTP-код ответа. 0 — если ошибка возникла на клиентской стороне.
+            - url (str): URL, по которому выполнялся запрос.
+            - method (str): HTTP-метод, использованный при запросе.
+    """
+    try:
+        driver.set_page_load_timeout(15)
+        driver.get(url)
+
+        page = driver.page_source.lower()
+
+        # Проверяем на наличие статуса 500
+        if "service univailable" in page:
+            logging_data.error_logger.error(
+                format_message(
+                    name_router=logging_data.router_name,
+                    status=500,
+                    method="GET",
+                    url=url,
+                    function_name=get_an_image_id_by_vheere.__name__,
+                    error_text=f"Сайт {url} загрузился с ошибкой 500 ",
+                )
+            )
+            return ResponseData(
+                error="Сайт временно недоступен",
+                status=500,
+                method="GET",
+                url=url,
+            )
+        wait: WebDriverWait = WebDriverWait(driver=driver, timeout=60)
+        # Вводим описание изображения
+        textarea = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "textarea[type='text']"))
+        )
+
+        textarea.clear()
+        textarea.send_keys(prompt)
+
+        # Кликаем на кнопку генерации видео
+        button = wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[.//text()[contains(., 'Generate')]]")
+            )
+        )
+        driver.execute_script("arguments[0].scrollIntoView(true);", button)
+        driver.execute_script("arguments[0].click();", button)
+
+        # Ждем пока не появится видео
+        img = WebDriverWait(driver=driver, timeout=timeout).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "img[id='selectedImage']"))
+        )
+
+        # Сохраняем видео
+        result_img: ResponseData = save_blob_image(
+            driver=driver,
+            img_element=img,
+            img_path=image_path,
+            logging_data=logging_data,
+        )
+
+        if result_img.error:
+            return result_img
+
+        return ResponseData(
+            message=result_img.message,
+            url=url,
+            method="GET",
+            status=200,
+        )
+    finally:
+        try:
+            driver.quit()
+        except Exception:
+            pass
