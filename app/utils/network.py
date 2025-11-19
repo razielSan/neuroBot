@@ -1,9 +1,15 @@
 from aiohttp import ClientSession
 from typing import Optional
 import base64
+from pathlib import Path
+from core.response import LoggingData
+
+from selenium.webdriver.remote.webelement import WebElement
 
 from erros_handlers.main import error_handler_for_the_website
+from erros_handlers.format import format_message
 from core.response import LoggingData, ResponseData
+from settings.response import messages
 
 
 async def get_and_save_image(
@@ -64,3 +70,61 @@ async def get_and_save_image(
         method="GET",
         status=200,
     )
+
+
+def save_blob_image(
+    driver,
+    img_element: WebElement,
+    img_path: Path,
+    logging_data: LoggingData,
+):
+    """
+    Сохраняет blob изображение из элемента.
+    """
+    try:
+        # Получаем base64 через Canvas
+        base64_data = driver.execute_script(
+            """
+        var img = arguments[0];
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+        return canvas.toDataURL('image/png');
+        """,
+            img_element,
+        )
+
+        # Декодируем и сохраняем
+        base64_image = base64_data.split(",")[1]
+        image_data = base64.b64decode(base64_image)
+
+        with open(img_path, "wb") as f:
+            f.write(image_data)
+
+        return ResponseData(
+            message=img_path,
+            url="<unknown>",
+            method="<unknown>",
+            status=200,
+        )
+
+    except Exception as err:
+        if logging_data:
+            logging_data.error_logger.exception(
+                format_message(
+                    name_router=logging_data.router_name,
+                    status=0,
+                    method="<unknown>",
+                    url="<unknown>",
+                    error_text=f"Ошибка при сохранении изображения - {err}",
+                    function_name=save_blob_image.__name__,
+                )
+            )
+        return ResponseData(
+            error=messages.SERVER_ERROR,
+            url="<unknwon>",
+            method="<unknown>",
+            status=0,
+        )
