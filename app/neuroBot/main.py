@@ -4,12 +4,7 @@ from neuroBot.extensions import (
     bot,
     dp,
     bot_settings,
-    img_desc_imagga_settings,
-    video_gen_vheer_settings,
-    img_gen_pollinations_settings,
-    img_gen_caila_io_settings,
-    img_gen_stablehorde_settings,
-    img_gen_vheer_settings,
+    model_settings,
     neurobot_main_logger,
 )
 
@@ -25,13 +20,13 @@ from utils.filesistem import ensure_derictories
 ensure_derictories(
     bot_settings.PATH_BOT_STATIC_FOLDER,
     bot_settings.PATH_BOT_TEMP_FOLDER,
-    img_desc_imagga_settings.PATH_TO_IMAGGA_IMAGES_DESCRIPTION,
-    video_gen_vheer_settings.PATH_TO_IMAGE_VHEER,
-    video_gen_vheer_settings.PATH_TO_VIDEO_VHEER,
-    img_gen_pollinations_settings.PATH_TO_POLLINATIONS_IMAGES_GENERATION,
-    img_gen_caila_io_settings.PATH_TO_CAILA_IMAGES_GENERATION,
-    img_gen_stablehorde_settings.PATH_TO_STABLEHORDE_IMAGES_GENERATION,
-    img_gen_vheer_settings.PATH_TO_VHEER_IMAGES_GENERATION,
+    model_settings.img_desc_models.imagga.PATH_TO_IMAGES,
+    model_settings.video_gen_models.vheer.PATH_TO_IMAGES,
+    model_settings.video_gen_models.vheer.PATH_TO_VIDEO,
+    model_settings.img_gen_models.pollinations.PATH_TO_IMAGES,
+    model_settings.img_gen_models.caila.PATH_TO_IMAGES,
+    model_settings.img_gen_models.stablehorde.PATH_TO_IMAGES,
+    model_settings.img_gen_models.vheer.PATH_TO_IMAGES,
     # info_logger=neurobot_main_logger.info_logger,
 )
 
@@ -56,9 +51,7 @@ async def run_bot() -> None:
         # Создаем глобальную сессию для всего бота. Будет доступ в роутерах через
         # название указанное ниже
 
-        neurobot_main_logger.info_logger.info(
-            f"{bot_settings.BOT_NAME} запущен"
-        )
+        neurobot_main_logger.info_logger.info(f"{bot_settings.BOT_NAME} запущен")
         async with aiohttp.ClientSession() as session:
             dp["session"] = session
             await dp.start_polling(bot)

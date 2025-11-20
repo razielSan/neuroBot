@@ -16,7 +16,7 @@ from neuroBot.extensions import chrome_selenium_settings
 from core.response import ResponseData, LoggingData
 from settings.response import messages
 from erros_handlers.format import format_message
-from neuroBot.extensions import video_gen_vheer_settings
+from neuroBot.extensions import model_settings
 from erros_handlers.decorator import safe_sync_execution
 
 
@@ -96,7 +96,7 @@ def create_video_by_is_vheer(
             # Если сайт по описанию изображения выдал ошибку используем стандартное описание
             if resonse_description.error:
                 resonse_description.message = choice(
-                    video_gen_vheer_settings.DEFAULT_LIST_DESCRIPTION_IMAGES,
+                    model_settings.video_gen_models.vheer.DEFAULT_LIST_DESCRIPTION_IMAGES,
                 )
                 update_progress(data_state="default_description")
             else:

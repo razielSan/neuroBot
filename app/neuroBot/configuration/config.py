@@ -36,5 +36,6 @@ class BotSettings(BaseSettings):
 
     # Конфигурация
     model_config: SettingsConfigDict = SettingsConfigDict(
-        env_file=str(BOT_DIR / ".env"), extra="ignore"
+        env_file=str(BOT_DIR / ".env"),
+        extra="ignore",
     )

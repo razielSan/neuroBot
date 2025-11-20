@@ -6,32 +6,21 @@ from utils.keyboards_utils import (
     get_total_buttons_inline_kb,
 )
 from neuroBot.configuration.config import BotSettings
-from neuroBot.configuration.image_description import ImaggaImageDescription
-from neuroBot.configuration.video_generation import VheerVideoGeneration
-from neuroBot.configuration.image_generation import (
-    PollinationsImageGeneration,
-    CailaIoImageGeneration,
-    StablehordeImageGeneration,
-    VheerImageGeneration,
-)
+
+
+from neuroBot.configuration.selenium import SeleniumSettings
 from settings.response import settings
 from core.config import InlineKeyboardData
-from neuroBot.configuration.selenium import SeleniumSettings
 from core.logging import LoggerStorage
+from neuroBot.configuration.generation_model.main import BaseGeneration
 
 
 # Настройки бота
 bot_settings: BotSettings = BotSettings()
 
 # Настройки моделей
-img_desc_imagga_settings: ImaggaImageDescription = ImaggaImageDescription()
-video_gen_vheer_settings: VheerVideoGeneration = VheerVideoGeneration()
-img_gen_pollinations_settings: PollinationsImageGeneration = (
-    PollinationsImageGeneration()
-)
-img_gen_caila_io_settings: CailaIoImageGeneration = CailaIoImageGeneration()
-img_gen_stablehorde_settings: StablehordeImageGeneration = StablehordeImageGeneration()
-img_gen_vheer_settings: VheerImageGeneration = VheerImageGeneration()
+model_settings = BaseGeneration()
+
 
 # Создаем бота
 bot: Bot = Bot(token=bot_settings.BOT_TOKEN)
@@ -55,8 +44,8 @@ get_start_button_neuroBot = get_total_buttons_reply_kb(
 get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
-            text=img_desc_imagga_settings.CALLBACK_BUTTON_TEXT,
-            callback_data=img_desc_imagga_settings.CALLBACK_BUTTON_DATA,
+            text=model_settings.img_desc_models.imagga.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.img_desc_models.imagga.CALLBACK_BUTTON_DATA,
         ),
     ],
     quantity_button=1,
@@ -66,8 +55,8 @@ get_start_buttons_inline_menu_for_image_description = get_total_buttons_inline_k
 get_start_button_inline_menu_for_video_generation = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
-            text=video_gen_vheer_settings.CALLBACK_BUTTON_NAME,
-            callback_data=video_gen_vheer_settings.CALLBACK_BUTTON_DATA,
+            text=model_settings.video_gen_models.vheer.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.video_gen_models.vheer.CALLBACK_BUTTON_DATA,
         )
     ],
     quantity_button=1,
@@ -77,21 +66,21 @@ get_start_button_inline_menu_for_video_generation = get_total_buttons_inline_kb(
 get_start_button_inline_menu_for_image_generation = get_total_buttons_inline_kb(
     list_inline_kb_data=[
         InlineKeyboardData(
-            text=img_gen_pollinations_settings.CALLBACK_BUTTON_TEXT,
-            callback_data=img_gen_pollinations_settings.CALLBACK_BUTTON_DATA,
+            text=model_settings.img_gen_models.pollinations.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.img_gen_models.pollinations.CALLBACK_BUTTON_DATA,
         ),
         InlineKeyboardData(
-            text=img_gen_caila_io_settings.CALLBACK_BUTTON_TEXT,
-            callback_data=img_gen_caila_io_settings.CALLBACK_BUTTON_DATA,
+            text=model_settings.img_gen_models.caila.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.img_gen_models.caila.CALLBACK_BUTTON_DATA,
         ),
         InlineKeyboardData(
-            text=img_gen_stablehorde_settings.CALLBACK_BUTTON_TEXT,
-            callback_data=img_gen_stablehorde_settings.CALLBACK_BUTTON_DATA,
+            text=model_settings.img_gen_models.stablehorde.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.img_gen_models.stablehorde.CALLBACK_BUTTON_DATA,
         ),
         InlineKeyboardData(
-            text=img_gen_vheer_settings.CALLBACK_BUTTON_TEXT,
-            callback_data=img_gen_vheer_settings.CALLBACK_BUTTON_DATA,
-        )
+            text=model_settings.img_gen_models.vheer.CALLBACK_BUTTON_TEXT,
+            callback_data=model_settings.img_gen_models.vheer.CALLBACK_BUTTON_DATA,
+        ),
     ],
     quantity_button=2,
 )

@@ -11,7 +11,8 @@ from aiohttp import ClientSession
 from utils.filesistem import delete_data
 
 from neuroBot.extensions import (
-    img_gen_caila_io_settings,
+    model_settings,
+    # img_gen_caila_io_settings,
     neurobot_image_generation_logger,
     bot,
     get_start_button_neuroBot,
@@ -24,7 +25,9 @@ from utils.network import get_and_save_image
 from erros_handlers.decorator import safe_async_execution
 
 
-router: Router = Router(name=img_gen_caila_io_settings.NAME_ROUTER)
+router: Router = Router(
+    name=model_settings.img_gen_models.caila.SERVICE_NAME,
+)
 
 
 class CailaImageGeneration(StatesGroup):
@@ -36,7 +39,7 @@ class CailaImageGeneration(StatesGroup):
 
 
 @router.callback_query(
-    StateFilter(None), F.data == img_gen_caila_io_settings.CALLBACK_BUTTON_DATA
+    StateFilter(None), F.data == model_settings.img_gen_models.caila.CALLBACK_BUTTON_DATA
 )
 async def caila(call: CallbackQuery, state: FSMContext) -> None:
     """Отправляет пользователю инлайн клавиатуру с выборами моделей."""
@@ -48,12 +51,12 @@ async def caila(call: CallbackQuery, state: FSMContext) -> None:
         reply_markup=get_total_buttons_inline_kb(
             list_inline_kb_data=[
                 InlineKeyboardData(
-                    text=img_gen_caila_io_settings.MODEL_GPT_IMAGE_1_TEXT,
-                    callback_data=img_gen_caila_io_settings.MODEL_GPT_IMAGE_1_DATA,
+                    text=model_settings.img_gen_models.caila.MODEL_GPT_IMAGE_1_TEXT,
+                    callback_data=model_settings.img_gen_models.caila.MODEL_GPT_IMAGE_1_DATA,
                 ),
                 InlineKeyboardData(
-                    text=img_gen_caila_io_settings.MODEL_DALI_E_3_TEXT,
-                    callback_data=img_gen_caila_io_settings.MODEL_DALI_E_3_DATA,
+                    text=model_settings.img_gen_models.caila.MODEL_DALI_E_3_TEXT,
+                    callback_data=model_settings.img_gen_models.caila.MODEL_DALI_E_3_DATA,
                 ),
             ]
         ),
@@ -132,7 +135,7 @@ async def add_prompt(
 
     # Формируем путь до картинки
     path_img: Path = (
-        img_gen_caila_io_settings.PATH_TO_CAILA_IMAGES_GENERATION / f"{uuid4().hex}.jpg"
+        model_settings.img_gen_models.caila.PATH_TO_IMAGES / f"{uuid4().hex}.jpg"
     )
 
     # Оборачиваем функцию в декоратор для отлова всех возможных ошибок
@@ -143,8 +146,8 @@ async def add_prompt(
 
     # Получаем url или base64 изображения
     response_img = await func(
-        url=img_gen_caila_io_settings.URL_IMAGE_GENERATE,
-        api_key=img_gen_caila_io_settings.APIKEY_CAILA_IG,
+        url=model_settings.img_gen_models.caila.URL_IMAGE_GENERATE,
+        api_key=model_settings.img_gen_models.caila.APIKEY_CAILA_IG,
         model=source,
         session=session,
         promtp=message.text,
@@ -155,7 +158,7 @@ async def add_prompt(
         # Проверка на base64
         base_64: bool = (
             True
-            if source == img_gen_caila_io_settings.MODEL_GPT_IMAGE_1_NAME
+            if source == model_settings.img_gen_models.caila.MODEL_GPT_IMAGE_1_NAME
             else False
         )
         # Оборачиваем функцию в декоратор для отлова всех возможных ошибок

@@ -8,7 +8,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters.state import StateFilter
 
-from neuroBot.extensions import img_gen_vheer_settings
 from settings.response import messages
 from utils.keyboards_utils import get_reply_cancel_button
 from erros_handlers.decorator import safe_sync_execution
@@ -18,6 +17,7 @@ from neuroBot.extensions import (
     neurobot_image_generation_logger,
     chrome_selenium_settings,
     get_start_button_neuroBot,
+    model_settings,
 )
 from neuroBot.bot_functions.image_generation import get_an_image_id_by_vheere
 from utils.filesistem import delete_data
@@ -25,7 +25,9 @@ from erros_handlers.helpers import run_safe_inf_executror
 from core.response import ResponseData
 
 
-router: Router = Router(name=img_gen_vheer_settings.NAME_ROUTER)
+router: Router = Router(
+    name=model_settings.img_gen_models.vheer.SERVICE_NAME,
+)
 
 
 class VheerImgGenerationFSM(StatesGroup):
@@ -36,7 +38,8 @@ class VheerImgGenerationFSM(StatesGroup):
 
 
 @router.callback_query(
-    StateFilter(None), F.data == img_gen_vheer_settings.CALLBACK_BUTTON_DATA
+    StateFilter(None),
+    F.data == model_settings.img_gen_models.vheer.CALLBACK_BUTTON_DATA,
 )
 async def img_gen_vheer(call: CallbackQuery, state: FSMContext) -> None:
     """
@@ -121,7 +124,7 @@ async def add_prompth_img_gen_vherr(message: Message, state: FSMContext) -> None
 
         # Формируем путь до картинки
         img_path: Path = (
-            img_gen_vheer_settings.PATH_TO_VHEER_IMAGES_GENERATION
+            model_settings.img_gen_models.vheer.PATH_TO_IMAGES
             / f"{uuid4().hex}.png"
         )
 
@@ -133,7 +136,7 @@ async def add_prompth_img_gen_vherr(message: Message, state: FSMContext) -> None
             loop,
             get_an_image_id_by_vheere,
             driver,
-            img_gen_vheer_settings.IMAGE_GENERATE,
+            model_settings.img_gen_models.vheer.IMAGE_GENERATE,
             message.text,
             img_path,
             neurobot_image_generation_logger,

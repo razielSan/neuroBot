@@ -101,7 +101,9 @@ pyflakes==3.2.0
 pysocks==1.7.1
     # via urllib3
 python-dotenv==1.0.1
-    # via pydantic-settings
+    # via
+    #   -r requirements.in
+    #   pydantic-settings
 requests==2.32.4
     # via -r requirements.in
 selenium==4.27.1

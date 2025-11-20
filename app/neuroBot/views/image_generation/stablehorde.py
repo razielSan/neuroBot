@@ -11,7 +11,7 @@ from aiogram.filters.state import StateFilter
 from aiohttp import ClientSession
 
 from neuroBot.extensions import (
-    img_gen_stablehorde_settings,
+    model_settings,
     get_start_button_neuroBot,
     bot,
     neurobot_image_generation_logger,
@@ -31,7 +31,7 @@ from core.response import ResponseData
 
 
 router: Router = Router(
-    name=img_gen_stablehorde_settings.NAME_ROUTER,
+    name=model_settings.img_gen_models.stablehorde.SERVICE_NAME,
 )
 
 
@@ -45,7 +45,7 @@ class StablehordeImgGenFSM(StatesGroup):
 
 @router.callback_query(
     StateFilter(None),
-    F.data == img_gen_stablehorde_settings.CALLBACK_BUTTON_DATA,
+    F.data == model_settings.img_gen_models.stablehorde.CALLBACK_BUTTON_DATA,
 )
 async def stablehorde(
     call: CallbackQuery,
@@ -143,8 +143,8 @@ async def add_prompt(
 
     # Получаем id картинки
     img_id = await func(
-        img_gen_stablehorde_settings.REQUESTS_TO_GENERATE_IMAGES,
-        img_gen_stablehorde_settings.APIKEY_STABLEHORDE_IG,
+        model_settings.img_gen_models.stablehorde.REQUESTS_TO_GENERATE_IMAGES,
+        model_settings.img_gen_models.stablehorde.APIKEY_STABLEHORDE_IG,
         message.text,
         session,
         neurobot_image_generation_logger,
@@ -170,8 +170,8 @@ async def add_prompt(
         # Создаем task. Делаем запросы в цикле пока не картинка не создастся
         task_progress = asyncio.create_task(
             func(
-                img_gen_stablehorde_settings.APIKEY_STABLEHORDE_IG,
-                img_gen_stablehorde_settings.REQUESTS_STATUS_CHECK_WITHOUT_IMAGES,
+                model_settings.img_gen_models.stablehorde.APIKEY_STABLEHORDE_IG,
+                model_settings.img_gen_models.stablehorde.REQUESTS_STATUS_CHECK_WITHOUT_IMAGES,
                 job_id,
                 session,
                 neurobot_image_generation_logger,
@@ -267,8 +267,8 @@ async def add_prompt(
 
                 # Делаем запрос на получение данных о картинке
                 img_content = await func(
-                    img_gen_stablehorde_settings.APIKEY_STABLEHORDE_IG,
-                    img_gen_stablehorde_settings.REQUESTS_FULL_STATUS_IMAGE_GENERATIONS,
+                    model_settings.img_gen_models.stablehorde.APIKEY_STABLEHORDE_IG,
+                    model_settings.img_gen_models.stablehorde.REQUESTS_FULL_STATUS_IMAGE_GENERATIONS,
                     job_id,
                     session,
                     neurobot_image_generation_logger,
@@ -288,7 +288,7 @@ async def add_prompt(
 
                     # Формируем путь до изображения
                     path_img: Path = (
-                        img_gen_stablehorde_settings.PATH_TO_STABLEHORDE_IMAGES_GENERATION
+                        model_settings.img_gen_models.stablehorde.PATH_TO_IMAGES
                         / f"{uuid4().hex}.{format_file}"
                     )
 

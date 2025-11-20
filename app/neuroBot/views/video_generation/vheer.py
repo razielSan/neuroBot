@@ -17,7 +17,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters.state import StateFilter
 
 from neuroBot.extensions import (
-    video_gen_vheer_settings,
+    model_settings,
     bot,
     get_start_button_neuroBot,
     neurobot_video_generation_logger,
@@ -32,7 +32,9 @@ from neuroBot.bot_functions.video_generation import create_video_by_is_vheer
 from erros_handlers.format import format_message
 from erros_handlers.helpers import run_safe_inf_executror
 
-router: Router = Router(name=video_gen_vheer_settings.NAME_ROUTER)
+router: Router = Router(
+    name=model_settings.video_gen_models.vheer.SERVICE_NAME,
+)
 
 
 class VheerVideoGenerationFSM(StatesGroup):
@@ -47,7 +49,7 @@ class VheerVideoGenerationFSM(StatesGroup):
 
 @router.callback_query(
     StateFilter(None),
-    F.data == video_gen_vheer_settings.CALLBACK_BUTTON_DATA,
+    F.data == model_settings.video_gen_models.vheer.CALLBACK_BUTTON_DATA,
 )
 async def vheer(call: CallbackQuery, state: FSMContext) -> None:
     """Отправляет пользователю инлайн клавиатуру с доступными вариантам генерации видео."""
@@ -184,7 +186,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         _, file_name = file_path.split("/")
 
         # Путь до картинки
-        path_image: Path = video_gen_vheer_settings.PATH_TO_IMAGE_VHEER / file_name
+        path_image: Path = model_settings.video_gen_models.vheer.PATH_TO_IMAGES / file_name
 
         # Скачиваем картинку в путь
         await message.bot.download(
@@ -194,12 +196,12 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
 
         # Формируем путь до видео файла
         video_path: Path = (
-            video_gen_vheer_settings.PATH_TO_VIDEO_VHEER / f"{uuid4().hex}.mp4"
+            model_settings.video_gen_models.vheer.PATH_TO_VIDEO / f"{uuid4().hex}.mp4"
         )
 
         # Если пользователь ввел описание по изображению указываем url сайта генератора описаний
         description_url: Optional[str] = (
-            video_gen_vheer_settings.PROMPT_IMG_URL_BY_DESCRIBEPICTURE_CC
+            model_settings.video_gen_models.vheer.PROMPT_IMG_URL_BY_DESCRIBEPICTURE_CC
             if not vheer_data.get("description", None)
             else None
         )
@@ -211,10 +213,10 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
             run_safe_inf_executror(
                 loop,
                 create_video_by_is_vheer,
-                video_gen_vheer_settings.VIDEO_URL,
+                model_settings.video_gen_models.vheer.VIDEO_URL,
                 path_image,
                 video_path,
-                video_gen_vheer_settings.VIDEO_DATA,
+                model_settings.video_gen_models.vheer.VIDEO_DATA,
                 prompt,
                 progress_update,
                 neurobot_video_generation_logger,
@@ -224,7 +226,7 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         )
 
         # Общее количество шагов необходимое для запроса
-        total_step: int = video_gen_vheer_settings.TOTAL_STEP
+        total_step: int = model_settings.video_gen_models.vheer.TOTAL_STEP
         video_progress: int = 0
         current_step: int = 0  # текущий шаг
 
@@ -324,13 +326,13 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
                     method="<unknown>",
                     error_text=f"Ошибка при генерации видео (vheer): {e}",
                     status=0,
-                    url=video_gen_vheer_settings.VIDEO_DATA,
+                    url=model_settings.video_gen_models.vheer.VIDEO_URL,
                 )
             )
             msg = ResponseData(
                 error="Ошибка генерации видео",
                 status=0,
-                url=video_gen_vheer_settings.VIDEO_DATA,
+                url=model_settings.video_gen_models.vheer.VIDEO_URL,
                 method="unknown",
             )
 

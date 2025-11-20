@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 
 from settings.response import messages
 from neuroBot.extensions import (
-    img_gen_pollinations_settings,
+    model_settings,
     neurobot_image_generation_logger,
 )
 from utils.network import get_and_save_image
@@ -20,7 +20,9 @@ from core.response import ResponseData
 from erros_handlers.decorator import safe_async_execution
 
 
-router: Router = Router(name=img_gen_pollinations_settings.NAME_ROUTER)
+router: Router = Router(
+    name=model_settings.img_gen_models.pollinations.SERVICE_NAME,
+)
 
 
 class PollinationsImageGenerationFSM(StatesGroup):
@@ -32,7 +34,7 @@ class PollinationsImageGenerationFSM(StatesGroup):
 
 @router.callback_query(
     StateFilter(None),
-    F.data == img_gen_pollinations_settings.CALLBACK_BUTTON_DATA,
+    F.data == model_settings.img_gen_models.pollinations.CALLBACK_BUTTON_DATA,
 )
 async def pollinations(call: CallbackQuery, state: FSMContext) -> None:
     """
@@ -104,13 +106,13 @@ async def add_img(message: Message, state: FSMContext, session: ClientSession) -
     await state.set_state(PollinationsImageGenerationFSM.spam)
 
     # Формируем url для гегенрации изображения
-    url: str = img_gen_pollinations_settings.IMAGE_GENERATE.format(
+    url: str = model_settings.img_gen_models.pollinations.IMAGE_GENERATE.format(
         text=message.text,
     )
 
     # Формируем имя изображения
     path_img: str = (
-        img_gen_pollinations_settings.PATH_TO_POLLINATIONS_IMAGES_GENERATION
+        model_settings.img_gen_models.pollinations.PATH_TO_IMAGES
         / f"{uuid4().hex}.jpg"
     )
 

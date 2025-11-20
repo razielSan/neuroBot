@@ -9,7 +9,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
 from neuroBot.extensions import (
-    img_desc_imagga_settings,
+    model_settings,
     bot,
     get_start_button_neuroBot,
     neurobot_image_description_logger,
@@ -22,7 +22,9 @@ from utils.filesistem import delete_data
 from erros_handlers.decorator import safe_async_execution
 
 
-router: Router = Router(name=img_desc_imagga_settings.NAME_ROUTER)
+router: Router = Router(
+    name=model_settings.img_desc_models.imagga.SERVICE_NAME,
+)
 
 
 class ImaggaImgDescFSM(StatesGroup):
@@ -34,7 +36,7 @@ class ImaggaImgDescFSM(StatesGroup):
 
 @router.callback_query(
     StateFilter(None),
-    F.data == img_desc_imagga_settings.CALLBACK_BUTTON_DATA,
+    F.data == model_settings.img_desc_models.imagga.CALLBACK_BUTTON_DATA,
 )
 async def immaga(
     call: CallbackQuery,
@@ -102,7 +104,7 @@ async def add_prompt_for_imagga(
 
         # Формируем путь для картинки
         path_img: Path = (
-            img_desc_imagga_settings.PATH_TO_IMAGGA_IMAGES_DESCRIPTION
+            model_settings.img_desc_models.imagga.PATH_TO_IMAGES
             / f"{uuid4().hex}.jpg"
         )
         # Скачиваем скиданную пользователем картинку для анализа
@@ -116,9 +118,9 @@ async def add_prompt_for_imagga(
 
         # Делаем запрос на получение описание изображения
         img_description: ResponseData = await func(
-            key_autorization=img_desc_imagga_settings.ID_IMAGGA_AUTHORIZATION,
-            upload_endpoint=img_desc_imagga_settings.UPLOAD_ENDPOINT,
-            url_tags=img_desc_imagga_settings.URL_TAGS,
+            key_autorization=model_settings.img_desc_models.imagga.ID_IMAGGA_AUTHORIZATION,
+            upload_endpoint=model_settings.img_desc_models.imagga.UPLOAD_ENDPOINT,
+            url_tags=model_settings.img_desc_models.imagga.URL_TAGS,
             path_img=path_img,
             session=session,
             logging_data=neurobot_image_description_logger,
