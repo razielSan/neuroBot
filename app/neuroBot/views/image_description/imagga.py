@@ -44,7 +44,6 @@ async def immaga(
     state: FSMContext,
 ) -> None:
     """Работа с FSM ImaggaImgDescFSM.Просит пользвателя скинуть картинку для анализа."""
-
     await call.message.edit_reply_markup(reply_markup=None)
 
     await call.message.answer(
@@ -57,7 +56,7 @@ async def immaga(
 
 @router.message(ImaggaImgDescFSM.prompt, F.text == "Отмена")
 async def cancel_imagga_img_desc_handler(message: Message, state: FSMContext) -> None:
-    """Работа с FSM ImaggaImgDescFSM.Отменяет все действияю"""
+    """Работа с FSM ImaggaImgDescFSM.Отменяет все действияю."""
     await state.clear()
     await message.answer(
         text=messages.CANCEL_MESSAGE,
@@ -76,7 +75,6 @@ async def get_message_when_spam_for_imagga(message: Message, state: FSMContext) 
 
     Отправляет пользователю сообщение если был введен текс при обработке запроса.
     """
-
     await message.reply(text=messages.WAIT_MESSAGE)
 
 
@@ -104,8 +102,7 @@ async def add_prompt_for_imagga(
 
         # Формируем путь для картинки
         path_img: Path = (
-            model_settings.img_desc_models.imagga.PATH_TO_IMAGES
-            / f"{uuid4().hex}.jpg"
+            model_settings.img_desc_models.imagga.PATH_TO_IMAGES / f"{uuid4().hex}.jpg"
         )
         # Скачиваем скиданную пользователем картинку для анализа
         await bot.download(file=message.photo[-1].file_id, destination=path_img)

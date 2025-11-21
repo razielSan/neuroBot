@@ -1,5 +1,5 @@
 from typing import Callable, Optional, Union, Any
-from asyncio import AbstractEventLoop
+from asyncio import AbstractEventLoop, exceptions
 import functools
 
 from core.response import LoggingData, ResponseData
@@ -36,6 +36,14 @@ async def run_safe_inf_executror(
                 *args,
                 **kwargs,
             ),
+        )
+    except exceptions.CancelledError:
+        print("Остановка работы процесса пользователем")
+        return ResponseData(
+            message="Остановка работы процесса пользователем",
+            status=0,
+            method="<unknown>",
+            url="<unknown>",
         )
 
     except Exception as err:

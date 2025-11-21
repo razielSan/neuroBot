@@ -2,7 +2,6 @@ from typing import Optional
 from pathlib import Path
 
 from pydantic import BaseModel
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from neuroBot.configuration.generation_model.filed import FieldGeneration
 
 
@@ -23,7 +22,7 @@ class Pollinations(FieldGeneration, BaseModel):
     )
 
 
-class Caila(FieldGeneration, BaseSettings):
+class Caila(FieldGeneration, BaseModel):
     """Модель сайта https://caila.io/."""
 
     # Основные параметры
@@ -37,7 +36,7 @@ class Caila(FieldGeneration, BaseSettings):
     TEXT_PREFIX: str = "2⃣"
     CALLBACK_PREFIX: str = "img_gen"
 
-    APIKEY_CAILA_IG: str
+    APIKEY_CAILA_IG: Optional[str] = None
 
     # URL для запроса
     URL_IMAGE_GENERATE: str = "https://caila.io/api/adapters/openai/images/generations"
@@ -50,14 +49,8 @@ class Caila(FieldGeneration, BaseSettings):
     MODEL_DALI_E_3_TEXT: str = "2⃣ dall-e-3"
     MODEL_DALI_E_3_DATA: str = "img_gen caila dall-e-3"
 
-    model_config: SettingsConfigDict = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent / ".env",
-        extra="ignore",
-        env_prefix="caila__",
-    )
 
-
-class Stablehorde(FieldGeneration, BaseSettings):
+class Stablehorde(FieldGeneration, BaseModel):
     """Модель сайта https://stablehorde.net."""
 
     # Основыне параметры
@@ -70,7 +63,7 @@ class Stablehorde(FieldGeneration, BaseSettings):
     TEXT_PREFIX: str = "3⃣"
     CALLBACK_PREFIX: str = "img_gen"
 
-    APIKEY_STABLEHORDE_IG: str
+    APIKEY_STABLEHORDE_IG: Optional[str] = None
 
     # URL для запроса
     REQUESTS_TO_GENERATE_IMAGES: str = "https://stablehorde.net/api/v2/generate/async"  # запроса на генерации изображений
@@ -79,12 +72,6 @@ class Stablehorde(FieldGeneration, BaseSettings):
     )
     REQUESTS_FULL_STATUS_IMAGE_GENERATIONS: str = (
         "https://stablehorde.net/api/v2/generate/status/{id}"
-    )
-
-    model_config: SettingsConfigDict = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent / ".env",
-        extra="ignore",
-        env_prefix="stablehorde__",
     )
 
 
@@ -108,7 +95,7 @@ class Vheer(FieldGeneration, BaseModel):
 
 class ImgGenerationModels(BaseModel):
     """Модель собирающая модели для генерации изображений."""
-    
+
     pollinations: Pollinations = Pollinations()
     caila: Caila = Caila()
     vheer: Vheer = Vheer()

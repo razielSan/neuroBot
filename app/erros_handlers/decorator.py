@@ -1,6 +1,5 @@
 from typing import Optional, Callable
 import functools
-import asyncio
 from asyncio import exceptions
 
 from erros_handlers.format import format_message

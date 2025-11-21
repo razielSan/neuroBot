@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from neuroBot.configuration.generation_model.filed import FieldGeneration
 
 
-class Imagga(FieldGeneration, BaseSettings):
+class Imagga(FieldGeneration, BaseModel):
     """Модель для сайта https://imagga.com/."""
 
     SERVICE_NAME: str = "ImgDesc Imagga"
@@ -24,12 +24,6 @@ class Imagga(FieldGeneration, BaseSettings):
     # URL для доступа к api сайта
     UPLOAD_ENDPOINT: str = "https://api.imagga.com/v2/uploads"  # URL для получения uplooad_image_id картинки
     URL_TAGS: str = "https://api.imagga.com/v2/tags"  # URL для описание изображения
-
-    model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent / ".env",
-        extra="ignore",
-        env_prefix="imagga__",
-    )
 
 
 class ImgDescGenerationModels(BaseModel):
