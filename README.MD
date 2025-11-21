@@ -123,14 +123,17 @@ app/<br>
  │    ├── static/<br>
  │    ├── temp/<br>
  │    ├── utils/<br>
- │    └── views/<br>
+ │    ├── views/<br>
+ │    ├── main.py<br>
+ │    ├── extensions.py<br>
+ │    └── .env<br>
+ │<br>
  ├── core/ <br>
  ├── logs/ <br>
  ├── settings/ <br>
  ├── erros_handlers/ <br>
  │    <br>
- ├── app.py<br>
- └── .env<br>
+ └── app.py<br>
 
 
 ## :telephone: **Обратная связь**
