@@ -24,7 +24,7 @@ python --version
 
 ##  2. Клонирование репозитория
 
-git clone https://github.com/yourname/neurobot.git
+git clone https://github.com/yourname/neurobot.git<br>
 cd neurobot
 
 
@@ -32,9 +32,9 @@ cd neurobot
 
 bash
 
-python -m venv venv
-source venv/bin/activate      # Linux/MacOS
-venv\Scripts\activate         # Windows
+python -m venv venv<br>
+source venv/bin/activate      # Linux/MacOS<br>
+venv\Scripts\activate         # Windows<br>
 
 ## 4.Установка зависимостей 
 
@@ -46,10 +46,10 @@ pip install -r requirements.txt
 
 Создайте файл .env в папке app/
 
-BOT_TOKEN=ВАШ_ТОКЕН_TELEGRAM
-img_desc_models__imagga__ID_IMAGGA_AUTHORIZATION=...
-img_gen_models__caila__APIKEY_CAILA_IG=..
-img_gen_models__stablehorde__APIKEY_STABLEHORDE_IG=...
+BOT_TOKEN=ВАШ_ТОКЕН_TELEGRAM<br>
+img_desc_models__imagga__ID_IMAGGA_AUTHORIZATION=...<br>
+img_gen_models__caila__APIKEY_CAILA_IG=..<br>
+img_gen_models__stablehorde__APIKEY_STABLEHORDE_IG=...<br>
 
 
 ## 6. Запуска бота
@@ -57,6 +57,6 @@ img_gen_models__stablehorde__APIKEY_STABLEHORDE_IG=...
 python app/app.py
 
 
-## Функциональность
+## 🤖 Функциональность
 
 :art: **Генерация изображений**
