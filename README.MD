@@ -1,6 +1,6 @@
-# 🤖 neuroBot - Telegram bot для генерации изображений,видео и анализа картинок
+# 🤖 NeuroBot - Telegram bot для генерации изображений,видео и анализа картинок
 
-**neuroBot** - это удобный Telegram-bot который позволяет
+**NeuroBot** - это удобный Telegram-bot который позволяет
 
 - генерировать изображения с помощью разных нейросетей;
 - получать описания изображений;
@@ -24,7 +24,7 @@ python --version
 
 ##  2. Клонирование репозитория
 
-git clone https://github.com/yourname/neurobot.git<br>
+git clone https://github.com/razielSan/neuroBot.git<br>
 cd neurobot
 
 
@@ -90,7 +90,7 @@ python app/app.py
 изображение и бот на основе полученных данных выдаст вам видео
 
 
-:satellite:	**Отслеживание прогресса**
+## :satellite:	**Отслеживание прогресса**
 
 Бот:
 - Делает регулярные проверки статуса задач
@@ -114,27 +114,33 @@ python app/app.py
 
 ## 🤖 Структура проекта
 
-app/
- ├── neuroBot/
- │    ├── bot_functions/
- │    ├── configuration/
- │    ├── keyboards/
- │    ├── middleware/
- │    ├── static/
- │    ├── temp/
- │    ├── utils/
- │    └── views/
- ├── core/ 
- ├── logs/ 
- ├── settings/ 
- ├── erros_handlers/ 
- │    
- ├── app.py
- └── .env
+app/<br>
+ ├── neuroBot/<br>
+ │    ├── bot_functions/<br>
+ │    ├── configuration/<br>
+ │    ├── keyboards/<br>
+ │    ├── middleware/<br>
+ │    ├── static/<br>
+ │    ├── temp/<br>
+ │    ├── utils/<br>
+ │    └── views/<br>
+ ├── core/ <br>
+ ├── logs/ <br>
+ ├── settings/ <br>
+ ├── erros_handlers/ <br>
+ │    <br>
+ ├── app.py<br>
+ └── .env<br>
 
 
-:telephone: **Обратная связь**
+## :telephone: **Обратная связь**
 
 Если нашли ошибку - создайте Issue или напишите мне в Telegram
 
 [Мой телеграм](https://t.me/razielasus)
+
+
+## Лицензия
+
+NeuroBot распространяется под лицензией MIT - вы можете использовать его в личных<br>
+и коммерческих целях
