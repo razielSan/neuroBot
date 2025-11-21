@@ -1,4 +1,4 @@
-# 🤖 NeuroBot - Telegram bot для генерации изображений,видео и анализа картинок
+# 🤖 NeuroBot - Telegram bot для генерации изображений, видео и анализа картинок
 
 **NeuroBot** - это удобный Telegram-bot который позволяет
 
@@ -28,7 +28,7 @@ git clone https://github.com/razielSan/neuroBot.git<br>
 cd neurobot
 
 
-## 3.Создание виртуального окружения
+## 3. Создание виртуального окружения
 
 bash
 
@@ -36,7 +36,7 @@ python -m venv venv<br>
 source venv/bin/activate      # Linux/MacOS<br>
 venv\Scripts\activate         # Windows<br>
 
-## 4.Установка зависимостей 
+## 4. Установка зависимостей 
 
 bash
 
@@ -82,7 +82,7 @@ python app/app.py
 
 :cinema:	**Генерация видео**
 
-Поддерживются сервисы:
+Поддерживаются сервисы:
 
 * Vheer
 
@@ -104,7 +104,7 @@ python app/app.py
 
 :lock: **Безопасность и стабильность**
 
-Проект содежит:
+Проект содержит:
 
 * Централизованный обработчик ошибок
 * безопасные врапперы save_async_execution
