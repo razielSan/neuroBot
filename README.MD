@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 ## 5. Настройка файла .env
 
-Создайте файл .env в папке app/
+Создайте файл .env в папке app/neuroBot/
 
 BOT_TOKEN=ВАШ_ТОКЕН_TELEGRAM<br>
 img_desc_models__imagga__ID_IMAGGA_AUTHORIZATION=...<br>
