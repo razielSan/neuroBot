@@ -186,7 +186,9 @@ async def add_photo_for_vheer(message: Message, state: FSMContext):
         _, file_name = file_path.split("/")
 
         # Путь до картинки
-        path_image: Path = model_settings.video_gen_models.vheer.PATH_TO_IMAGES / file_name
+        path_image: Path = (
+            model_settings.video_gen_models.vheer.PATH_TO_IMAGES / file_name
+        )
 
         # Скачиваем картинку в путь
         await message.bot.download(
