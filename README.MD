@@ -25,7 +25,7 @@ python --version
 ##  2. Клонирование репозитория
 
 git clone https://github.com/razielSan/neuroBot.git<br>
-cd neurobot
+cd app
 
 
 ## 3. Создание виртуального окружения
@@ -54,7 +54,7 @@ img_gen_models__stablehorde__APIKEY_STABLEHORDE_IG=...<br>
 
 ## 6. Запуска бота
 
-python app/app.py
+python app.py
 
 
 ## 🤖 Функциональность
@@ -132,6 +132,7 @@ app/<br>
  ├── logs/ <br>
  ├── settings/ <br>
  ├── erros_handlers/ <br>
+ ├── utils/ <br>
  │    <br>
  └── app.py<br>
 
